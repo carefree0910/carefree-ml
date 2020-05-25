@@ -570,14 +570,15 @@ class timeit(context_error_handler):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg, precision=6):
         self._msg = msg
+        self._p = precision
 
     def __enter__(self):
         self._t = time.time()
 
     def _normal_exit(self, exc_type, exc_val, exc_tb):
-        print(f"{INFO_PREFIX}timing for {self._msg:^16s} : {time.time() - self._t:6.4f}")
+        print(f"{INFO_PREFIX}timing for {self._msg:^16s} : {time.time() - self._t:{self._p}.{self._p-2}f}")
 
 
 class general_batch_manager(context_error_handler):
