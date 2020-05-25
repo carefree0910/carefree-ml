@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from typing import *
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 
 from ..misc.toolkit import register_core
 
@@ -57,13 +57,7 @@ class Base(ABC):
         return register_core(name, model_dict)
 
 
-class ClassifierBase(Base):
-    @abstractmethod
-    def fit(self,
-            x: np.ndarray,
-            y: np.ndarray) -> "ClassifierBase":
-        pass
-
+class ClassifierBase(Base, metaclass=ABCMeta):
     @abstractmethod
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
@@ -99,13 +93,8 @@ class ClassifierBase(Base):
         """
 
 
-class RegressorBase(Base):
-    @abstractmethod
-    def fit(self,
-            x: np.ndarray,
-            y: np.ndarray) -> "RegressorBase":
-        pass
 
+class RegressorBase(Base, metaclass=ABCMeta):
     @abstractmethod
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
