@@ -1,4 +1,4 @@
-from .linear_model import *
+from .linear_regression import *
 from .poly import *
 from .bases import *
 
