@@ -1,7 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from typing import *
+from functools import partial
 from abc import ABC, abstractmethod
 
 from ..toolkit import register_core, fix_float_to_length
@@ -91,7 +93,6 @@ class GradientDescentMixin(ABC):
                         epoch: int = 20,
                         batch_size: int = 32,
                         **kwargs) -> "GradientDescentMixin":
-        self._losses = []
         self._epoch = epoch
         self._batch_size = batch_size
         self._optimizer = optimizer_dict[optimizer](lr, **kwargs)
@@ -106,6 +107,7 @@ class GradientDescentMixin(ABC):
         n_step = n_sample // b_size
         n_step += int(n_step * b_size < n_sample)
         iterator = tqdm(range(self._epoch), total=self._epoch)
+        self._losses = []
         for _ in iterator:
             local_losses = []
             indices = np.random.permutation(n_sample)
@@ -118,6 +120,18 @@ class GradientDescentMixin(ABC):
                 local_losses.append(loss_dict["loss"])
             iterator.set_postfix({"loss": fix_float_to_length(local_losses[0], 6)})
             self._losses.append(local_losses)
+
+    def plot_loss_curve(self) -> "GradientDescentMixin":
+        base = np.arange(len(self._losses))
+        to_array = partial(np.array, dtype=np.float32)
+        losses = list(map(to_array, self._losses))
+        mean, std = map(to_array, map(list, [map(np.mean, losses), map(np.std, losses)]))
+        ax = plt.gca()
+        ax.plot(base, mean)
+        plt.title("loss curve")
+        ax.fill_between(base, mean + std, mean - std, color="#b9cfe7")
+        plt.show()
+        return self
 
 
 __all__ = ["Optimizer", "GradientDescentMixin", "optimizer_dict"]

@@ -14,6 +14,7 @@ prices = Data().read("prices.txt")
         .setup_optimizer("sgd", 0.1)
         .fit(prices.x, prices.y)
         .visualize1d(prices.x, prices.y)
+        .plot_loss_curve()
 )
 
 

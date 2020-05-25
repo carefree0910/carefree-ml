@@ -13,6 +13,7 @@ breast_cancer = Data.breast_cancer()
         .make("logistic_regression")
         .setup_optimizer("sgd", 0.1)
         .fit(breast_cancer.x, breast_cancer.y)
+        .plot_loss_curve()
 )
 
 
