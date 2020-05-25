@@ -11,14 +11,14 @@ breast_cancer = Data.breast_cancer()
 (
     Base
         .make("logistic_regression")
-        .setup_optimizer("sgd", 0.1, epoch=100)
+        .setup_optimizer("sgd", 0.1)
         .fit(breast_cancer.x, breast_cancer.y)
 )
 
 
 # comparison
 
-lr = Base.make("logistic_regression").setup_optimizer("sgd", 0.1, epoch=100)
+lr = Base.make("logistic_regression").setup_optimizer("sgd", 0.1)
 with timeit("cfml", precision=8):
     lr.fit(breast_cancer.x, breast_cancer.y)
 sk_clf = LogisticRegression(max_iter=10000)
