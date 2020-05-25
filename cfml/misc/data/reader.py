@@ -33,7 +33,7 @@ class Data:
             line = line.strip().split(delim)
             while label_idx < 0:
                 label_idx += len(line)
-            ys.append(float(line.pop(label_idx)))
+            ys.append([float(line.pop(label_idx))])
             xs.append(list(map(float, line)))
         xs, ys = map(np.stack, [xs, ys])
         if names is None:
@@ -41,10 +41,18 @@ class Data:
         else:
             label_name = names.pop(label_idx)
             feature_names = names
+        xs = xs.astype(np.float32)
         if self._dtype is not None:
             dtype = self._dtype
+            ys = ys.astype(np.int if dtype == "clf" else np.float32)
         else:
-            dtype = "clf" if np.allclose(ys, ys.astype(np.int)) else "reg"
+            ys_int = ys.astype(np.int)
+            if np.allclose(ys, ys_int):
+                ys = ys_int
+                dtype = "clf"
+            else:
+                dtype = "reg"
+                ys = ys.astype(np.float32)
         return dataset(xs, ys, dtype, label_name, feature_names)
 
     def _read_txt(self, file: str, *, delim: str = ",", label_idx: int = -1) -> dataset:
