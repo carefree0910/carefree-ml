@@ -92,6 +92,9 @@ class ClassifierBase(Base, metaclass=ABCMeta):
 
         """
 
+    @staticmethod
+    def get_num_classes(y: np.ndarray) -> int:
+        return y.max().item() + 1
 
 
 class RegressorBase(Base, metaclass=ABCMeta):
