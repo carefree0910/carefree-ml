@@ -96,6 +96,14 @@ class ClassifierBase(Base, metaclass=ABCMeta):
     def get_num_classes(y: np.ndarray) -> int:
         return y.max().item() + 1
 
+    def check_binary_classification(self, y: np.ndarray):
+        num_classes = self.get_num_classes(y)
+        if num_classes > 2:
+            raise ValueError(
+                f"{type(self).__name__} only supports num_classes=2.\n"
+                "* For multi-class problems, please use NeuralNetwork instead"
+            )
+
 
 class RegressorBase(Base, metaclass=ABCMeta):
     @abstractmethod

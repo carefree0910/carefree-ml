@@ -30,12 +30,7 @@ class LogisticRegression(ClassifierBase, LinearMixin):
     def fit(self,
             x: np.ndarray,
             y: np.ndarray) -> "LogisticRegression":
-        num_classes = self.get_num_classes(y)
-        if num_classes > 2:
-            raise ValueError(
-                "LogisticRegression only supports num_classes=2.\n"
-                "For multi-class problems, please use NeuralNetwork instead"
-            )
+        self.check_binary_classification(y)
         self._fit_linear(x, y)
         return self
 
