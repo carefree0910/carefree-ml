@@ -1,6 +1,7 @@
 import numpy as np
 
 from abc import ABCMeta
+from typing import *
 
 from ...misc.optim import GradientDescentMixin
 
@@ -13,6 +14,29 @@ class LinearMixin(GradientDescentMixin, metaclass=ABCMeta):
     @property
     def normalize_labels(self):
         return getattr(self, "_normalize_labels", False)
+
+    def parameter_names(self) -> List[str]:
+        parameters = ["_w"]
+        if self.fit_intersect:
+            parameters.append("_b")
+        return parameters
+
+    def loss_function(self,
+                      x_batch: np.ndarray,
+                      y_batch: np.ndarray) -> Dict[str, Any]:
+        predictions = self._predict_normalized(x_batch)
+        diff = predictions - y_batch
+        return {"diff": diff, "loss": np.linalg.norm(diff).item()}
+
+    def gradient_function(self,
+                          x_batch: np.ndarray,
+                          y_batch: np.ndarray,
+                          loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
+        diff = loss_dict["diff"]
+        gradients = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}
+        if self.fit_intersect:
+            gradients["_b"] = diff.mean(0).reshape([1, 1])
+        return gradients
 
     def _fit_linear(self,
                     x: np.ndarray,
