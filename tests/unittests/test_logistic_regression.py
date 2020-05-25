@@ -27,3 +27,5 @@ with timeit("sklearn", precision=8):
 
 print(f"cfml     auc : {Metrics.auc(breast_cancer.y, lr.predict_prob(breast_cancer.x)):6.4f}")
 print(f"sklearn  auc : {Metrics.auc(breast_cancer.y, sk_clf.predict_proba(breast_cancer.x)):6.4f}")
+print(f"cfml     acc : {Metrics.acc(breast_cancer.y, lr.predict(breast_cancer.x)):6.4f}")
+print(f"sklearn  acc : {Metrics.acc(breast_cancer.y, sk_clf.predict(breast_cancer.x)):6.4f}")
