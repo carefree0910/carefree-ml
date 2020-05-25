@@ -136,7 +136,7 @@ class RegressorBase(Base):
             plt.scatter(x, y, c="g", s=20)
         x_min, x_max = x.min(), x.max()
         expand = expand_ratio * (x_max - x_min)
-        x0 = np.linspace(x_min - expand, x_max + expand, num_samples)
+        x0 = np.linspace(x_min - expand, x_max + expand, num_samples).reshape([-1, 1])
         plt.plot(x0, self.predict(x0).ravel())
         plt.show()
 
