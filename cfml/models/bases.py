@@ -58,7 +58,6 @@ class Base(ABC):
 
 
 class ClassifierBase(Base, metaclass=ABCMeta):
-    @abstractmethod
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
         """ make label predictions with the model
@@ -74,6 +73,7 @@ class ClassifierBase(Base, metaclass=ABCMeta):
         * should be a column vector (i.e. y_hat.shape == [n, 1])
 
         """
+        return np.argmax(self.predict_prob(x), axis=1).reshape([-1, 1])
 
     @abstractmethod
     def predict_prob(self,
