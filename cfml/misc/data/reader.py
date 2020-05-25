@@ -1,7 +1,8 @@
 import os
 import numpy as np
 
-from typing import List, NamedTuple
+from typing import *
+from sklearn.utils import Bunch
 
 current_path = os.path.abspath(os.path.split(__file__)[0])
 
@@ -10,8 +11,9 @@ class dataset(NamedTuple):
     x: np.ndarray
     y: np.ndarray
     dtype: str
-    label_name: str
-    feature_names: List[str]
+    label_name: Union[None, str]
+    label_names: Union[None, List[str]]
+    feature_names: Union[None, List[str]]
 
     @property
     def is_clf(self):
@@ -20,6 +22,14 @@ class dataset(NamedTuple):
     @property
     def is_reg(self):
         return self.dtype == "reg"
+
+    @classmethod
+    def from_bunch(cls, dtype: str, bunch: Bunch) -> "dataset":
+        x = bunch.data
+        y = bunch.target.reshape([-1, 1])
+        label_names = bunch.target_names
+        feature_names = bunch.feature_names
+        return dataset(x, y, dtype, "label", label_names, feature_names)
 
 
 class Data:
@@ -53,7 +63,7 @@ class Data:
             else:
                 dtype = "reg"
                 ys = ys.astype(np.float32)
-        return dataset(xs, ys, dtype, label_name, feature_names)
+        return dataset(xs, ys, dtype, label_name, None, feature_names)
 
     def _read_txt(self, file: str, *, delim: str = ",", label_idx: int = -1) -> dataset:
         with open(os.path.join(self._datasets_path, file), "r") as f:
