@@ -96,6 +96,10 @@ class Data:
         return dataset.from_bunch("clf", load_iris())
 
     @staticmethod
+    def digits() -> dataset:
+        return dataset.from_bunch("clf", load_digits())
+
+    @staticmethod
     def breast_cancer() -> dataset:
         return dataset.from_bunch("clf", load_breast_cancer())
 
