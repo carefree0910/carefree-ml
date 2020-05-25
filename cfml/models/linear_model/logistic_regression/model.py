@@ -1,5 +1,7 @@
 import numpy as np
 
+from typing import *
+
 from ..base import LinearMixin
 from ...bases import ClassifierBase
 from ....misc.toolkit import Activations
@@ -15,6 +17,15 @@ class LogisticRegression(ClassifierBase, LinearMixin):
         self._w = self._b = None
         self._x_mean = self._x_std = None
         self._sigmoid = Activations("sigmoid")
+
+    def gradient_function(self,
+                          x_batch: np.ndarray,
+                          y_batch: np.ndarray,
+                          loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
+        gradient_dict = super().gradient_function(x_batch, y_batch, loss_dict)
+        if self._lb > 0.:
+            gradient_dict["_w"] += self._lb * self._w
+        return gradient_dict
 
     def fit(self,
             x: np.ndarray,
