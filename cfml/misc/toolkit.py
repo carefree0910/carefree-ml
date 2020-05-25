@@ -438,6 +438,31 @@ class Metrics:
         return thresholds[np.argmax(metric)]
 
 
+class Activations:
+    def __init__(self, activation: str):
+        self._activation = activation
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return getattr(Activations, self._activation)(x)
+
+    def grad(self, forward: np.ndarray) -> np.ndarray:
+        return getattr(Activations, f"{self._activation}_grad")(forward)
+
+    def visualize(self, x_min: float = -5., x_max: float = 5.):
+        plt.figure()
+        x0 = np.linspace(x_min, x_max)
+        plt.plot(x0, self(x0))
+        plt.show()
+
+    @staticmethod
+    def sigmoid(x):
+        return 1. / (1. + np.exp(-x))
+
+    @staticmethod
+    def sigmoid_grad(forward):
+        return forward * (1. - forward)
+
+
 class Incrementer:
     """
     Util class which can calculate running mean & running std efficiently
