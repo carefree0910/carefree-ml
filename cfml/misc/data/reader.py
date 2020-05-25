@@ -3,6 +3,7 @@ import numpy as np
 
 from typing import *
 from sklearn.utils import Bunch
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.datasets import *
 
 current_path = os.path.abspath(os.path.split(__file__)[0])
@@ -31,6 +32,10 @@ class dataset(NamedTuple):
         label_names = bunch.target_names
         feature_names = bunch.feature_names
         return dataset(x, y, dtype, "label", label_names, feature_names)
+
+    def to_one_hot(self, categories="auto") -> "dataset":
+        one_hot = OneHotEncoder(categories=categories, sparse=False).fit_transform(self.x)
+        return dataset(one_hot.astype(np.float32), *self[1:])
 
 
 class Data:
