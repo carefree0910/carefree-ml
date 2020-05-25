@@ -3,6 +3,7 @@ import numpy as np
 
 from typing import *
 from sklearn.utils import Bunch
+from sklearn.datasets import *
 
 current_path = os.path.abspath(os.path.split(__file__)[0])
 
@@ -84,6 +85,14 @@ class Data:
         if file.endswith(".csv"):
             return self._read_csv(file, delim=delim, label_idx=label_idx)
         raise NotImplementedError(f"'{file}' is not a valid file type for Data")
+
+    @staticmethod
+    def iris() -> dataset:
+        return dataset.from_bunch("clf", load_iris())
+
+    @staticmethod
+    def breast_cancer() -> dataset:
+        return dataset.from_bunch("clf", load_breast_cancer())
 
 
 __all__ = ["Data"]
