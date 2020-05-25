@@ -11,7 +11,7 @@ prices = Data().read("prices.txt")
 (
     Base
         .make("linear_regression")
-        .setup_optimizer("sgd", 0.1, epoch=100)
+        .setup_optimizer("sgd", 0.1)
         .fit(prices.x, prices.y)
         .visualize1d(prices.x, prices.y)
 )
@@ -19,7 +19,7 @@ prices = Data().read("prices.txt")
 
 # comparison
 
-lr = Base.make("linear_regression").setup_optimizer("sgd", 0.1, epoch=100)
+lr = Base.make("linear_regression").setup_optimizer("sgd", 0.1)
 poly = Base.make("poly")
 with timeit("cfml_lr", precision=8):
     lr.fit(prices.x, prices.y)
