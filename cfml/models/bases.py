@@ -128,7 +128,7 @@ class RegressorBase(Base, metaclass=ABCMeta):
                     y: np.ndarray = None,
                     *,
                     num_samples: int = 100,
-                    expand_ratio: float = 0.25):
+                    expand_ratio: float = 0.25) -> "RegressorBase":
         if x.shape[1] != 1:
             raise ValueError("visualize1d only supports 1-dimensional features")
         plt.figure()
@@ -139,6 +139,7 @@ class RegressorBase(Base, metaclass=ABCMeta):
         x0 = np.linspace(x_min - expand, x_max + expand, num_samples).reshape([-1, 1])
         plt.plot(x0, self.predict(x0).ravel())
         plt.show()
+        return self
 
 
 __all__ = ["Base", "ClassifierBase", "RegressorBase", "model_dict"]
