@@ -457,7 +457,7 @@ class Incrementer:
 
     """
 
-    def __init__(self, window_size=None):
+    def __init__(self, window_size: int = None):
         if window_size is not None:
             if not isinstance(window_size, int):
                 raise ValueError(f"window size should be integer, {type(window_size)} found")
