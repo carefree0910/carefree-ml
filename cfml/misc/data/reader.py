@@ -96,6 +96,10 @@ class Data:
         return dataset.from_bunch("clf", load_iris())
 
     @staticmethod
+    def boston() -> dataset:
+        return dataset.from_bunch("reg", load_boston())
+
+    @staticmethod
     def digits() -> dataset:
         return dataset.from_bunch("clf", load_digits())
 
