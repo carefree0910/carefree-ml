@@ -7,7 +7,6 @@ from .kernel import Kernel
 from ..bases import Base
 from ..mixins import NormalizeMixin
 from ...misc.optim import GradientDescentMixin
-from ...misc.toolkit import Activations, Metrics
 
 
 class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
@@ -65,8 +64,6 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
         self._alpha = np.zeros([1, x.shape[0]], np.float32)
         self._b = np.zeros([1, 1], np.float32)
         self._gradient_descent(self._x_normalized, self._y_normalized)
-        probabilities = self.predict_prob(x)
-        self.threshold = Metrics.get_binary_threshold(y, probabilities, "acc")
 
     def _predict_normalized(self,
                             x_normalized: np.ndarray) -> np.ndarray:

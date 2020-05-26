@@ -5,10 +5,12 @@ from typing import *
 from .base import SVMMixin
 from .kernel import Kernel
 from ..bases import ClassifierBase
+from ..mixins import BinaryClassifierMixin
+from ...misc.toolkit import Activations
 
 
 @ClassifierBase.register("svc")
-class SVC(ClassifierBase, SVMMixin):
+class SVC(ClassifierBase, SVMMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  kernel: str = "rbf",
@@ -23,14 +25,15 @@ class SVC(ClassifierBase, SVMMixin):
             x: np.ndarray,
             y: np.ndarray) -> "SVC":
         self.check_binary_classification(y)
-        y = y.copy()
-        y[y == 0] = -1
-        self._fit_svm(x, y)
+        y_svm = y.copy()
+        y_svm[y_svm == 0] = -1
+        self._fit_svm(x, y_svm)
+        self._generate_binary_threshold(x, y)
         return self
 
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
-        return (self.predict_prob(x)[..., 1] >= self.threshold).astype(np.int).reshape([-1, 1])
+        return BinaryClassifierMixin.predict(self, x)
 
     def predict_prob(self,
                      x: np.ndarray) -> np.ndarray:

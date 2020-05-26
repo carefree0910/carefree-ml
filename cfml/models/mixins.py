@@ -2,6 +2,8 @@ import numpy as np
 
 from abc import ABC, abstractmethod
 
+from ..misc.toolkit import Metrics
+
 
 class StrMixin:
     @property
@@ -95,4 +97,37 @@ class NormalizeMixin(ABC):
         return predictions
 
 
-__all__ = ["StrMixin", "NormalizeMixin"]
+class BinaryClassifierMixin(ABC):
+    @property
+    def threshold(self):
+        return getattr(self, "_binary_threshold", 0.5)
+
+    @property
+    def binary_metric(self):
+        return getattr(self, "_binary_metric", "acc")
+
+    def check_binary_classification(self, y: np.ndarray):
+        num_classes = y.max() + 1
+        if num_classes > 2:
+            raise ValueError(
+                f"{type(self).__name__} only supports num_classes=2.\n"
+                "* For multi-class problems, please use NeuralNetwork instead"
+            )
+
+    @abstractmethod
+    def predict_prob(self,
+                     x: np.ndarray) -> np.ndarray:
+        pass
+
+    def _generate_binary_threshold(self,
+                                   x: np.ndarray,
+                                   y: np.ndarray):
+        probabilities = self.predict_prob(x)
+        self._binary_threshold = Metrics.get_binary_threshold(y, probabilities, self.binary_metric)
+
+    def predict(self,
+                x: np.ndarray) -> np.ndarray:
+        return (self.predict_prob(x)[..., 1] >= self.threshold).astype(np.int).reshape([-1, 1])
+
+
+__all__ = ["StrMixin", "NormalizeMixin", "BinaryClassifierMixin"]

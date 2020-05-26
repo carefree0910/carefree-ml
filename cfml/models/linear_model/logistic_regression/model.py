@@ -4,11 +4,12 @@ from typing import *
 
 from ..base import LinearMixin
 from ...bases import ClassifierBase
+from ...mixins import BinaryClassifierMixin
 from ....misc.toolkit import Activations
 
 
 @ClassifierBase.register("logistic_regression")
-class LogisticRegression(ClassifierBase, LinearMixin):
+class LogisticRegression(ClassifierBase, LinearMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 0.,
                  fit_intersect: bool = True):
@@ -33,12 +34,17 @@ class LogisticRegression(ClassifierBase, LinearMixin):
             y: np.ndarray) -> "LogisticRegression":
         self.check_binary_classification(y)
         self._fit_linear(x, y)
+        self._generate_binary_threshold(x, y)
         return self
 
     def _predict_normalized(self,
                             x_normalized: np.ndarray) -> np.ndarray:
         affine = super()._predict_normalized(x_normalized)
         return self._sigmoid(affine)
+
+    def predict(self,
+                x: np.ndarray) -> np.ndarray:
+        return BinaryClassifierMixin.predict(self, x)
 
     def predict_prob(self,
                      x: np.ndarray) -> np.ndarray:
