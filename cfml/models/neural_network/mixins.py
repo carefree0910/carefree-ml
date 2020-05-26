@@ -68,10 +68,7 @@ class FCNNMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
                       x_batch: np.ndarray,
                       y_batch: np.ndarray,
                       batch_indices: np.ndarray) -> Dict[str, Any]:
-        net = x_batch
-        for i, layer in enumerate(self.hidden_layers):
-            net = layer(net, *self.wb(i))
-        final_affine = self._final_affine(net, *self.wb(len(self.hidden_layers)))
+        final_affine = self._predict_normalized(x_batch)
         loss = self.loss(final_affine, y_batch)
         return {"loss": loss}
 
