@@ -10,7 +10,7 @@ from ...misc.toolkit import Activations
 
 
 @ClassifierBase.register("svc")
-class SVC(ClassifierBase, SVCMixin, SVMMixin, BinaryClassifierMixin):
+class SVC(SVCMixin, BinaryClassifierMixin, SVMMixin, ClassifierBase):
     def __init__(self, *,
                  lb: float = 1.,
                  kernel: str = "rbf",
@@ -29,10 +29,6 @@ class SVC(ClassifierBase, SVCMixin, SVMMixin, BinaryClassifierMixin):
         self._fit_svm(x, y_svm)
         self._generate_binary_threshold(x, y)
         return self
-
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        return BinaryClassifierMixin.predict(self, x)
 
     def predict_prob(self,
                      x: np.ndarray) -> np.ndarray:
