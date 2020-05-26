@@ -1,9 +1,9 @@
-from ..mixin import LinearMixin
+from ..mixin import LinearRegressorMixin
 from ...bases import RegressorBase
 
 
 @RegressorBase.register("linear_regression")
-class LinearRegression(LinearMixin, RegressorBase):
+class LinearRegression(LinearRegressorMixin, RegressorBase):
     def __init__(self, *,
                  fit_intersect: bool = True,
                  normalize_labels: bool = True):

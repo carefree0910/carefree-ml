@@ -5,8 +5,9 @@ from typing import *
 
 from .kernel import Kernel
 from ..bases import Base
-from ..mixins import NormalizeMixin
+from ..mixins import NormalizeMixin, BinaryClassifierMixin
 from ...misc.optim import GradientDescentMixin
+from ...misc.toolkit import Activations
 
 
 class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
@@ -90,14 +91,40 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
         return affine.T
 
 
-class SVCMixin:
+class SVCMixin(BinaryClassifierMixin, SVMMixin, metaclass=ABCMeta):
+    def _fit_core(self,
+                  x_processed: np.ndarray,
+                  y_processed: np.ndarray):
+        self._fit_svm(x_processed, y_processed)
+
+    def predict_prob(self,
+                     x: np.ndarray) -> np.ndarray:
+        affine = self.predict_raw(x)
+        sigmoid = Activations.sigmoid(np.clip(affine, -2., 2.) * 5.)
+        return np.hstack([1. - sigmoid, sigmoid])
+
+
+class SVRMixin(SVMMixin, metaclass=ABCMeta):
+    def predict(self,
+                x: np.ndarray) -> np.ndarray:
+        return self.predict_raw(x)
+
+
+class CoreSVCMixin:
+    @staticmethod
+    def _preprocess_data(x: np.ndarray,
+                         y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        y_svm = y.copy()
+        y_svm[y_svm == 0] = -1
+        return x, y_svm
+
     @staticmethod
     def get_diffs(y_batch: np.ndarray,
                   predictions: np.ndarray) -> Dict[str, np.ndarray]:
         return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
 
 
-class SVRMixin:
+class CoreSVRMixin:
     @property
     def eps(self):
         return getattr(self, "_eps", 0.)
@@ -120,4 +147,4 @@ class SVRMixin:
         return {"diff": tube_diff, "delta_coeff": np.sign(raw_diff)}
 
 
-__all__ = ["SVMMixin", "SVCMixin", "SVRMixin"]
+__all__ = ["SVCMixin", "SVRMixin", "CoreSVCMixin", "CoreSVRMixin"]

@@ -1,5 +1,3 @@
-import numpy as np
-
 from typing import *
 
 from .mixins import *
@@ -8,7 +6,7 @@ from ..bases import RegressorBase
 
 
 @RegressorBase.register("svr")
-class SVR(SVRMixin, SVMMixin, RegressorBase):
+class SVR(CoreSVRMixin, SVRMixin, RegressorBase):
     def __init__(self, *,
                  eps: float = 0.,
                  lb: Union[str, float] = "auto",

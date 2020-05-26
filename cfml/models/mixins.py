@@ -1,5 +1,6 @@
 import numpy as np
 
+from typing import *
 from abc import ABC, abstractmethod
 
 from ..misc.toolkit import Metrics
@@ -90,8 +91,8 @@ class NormalizeMixin(ABC):
                             x: np.ndarray) -> np.ndarray:
         pass
 
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
+    def predict_raw(self,
+                    x: np.ndarray) -> np.ndarray:
         predictions = self._predict_normalized(self.normalize_x(x))
         self.recover_y(predictions)
         return predictions
@@ -114,16 +115,36 @@ class BinaryClassifierMixin(ABC):
                 "* For multi-class problems, please use NeuralNetwork instead"
             )
 
-    @abstractmethod
-    def predict_prob(self,
-                     x: np.ndarray) -> np.ndarray:
-        pass
+    @staticmethod
+    def _preprocess_data(x: np.ndarray,
+                         y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        return x, y
 
     def _generate_binary_threshold(self,
                                    x: np.ndarray,
                                    y: np.ndarray):
         probabilities = self.predict_prob(x)
         self._binary_threshold = Metrics.get_binary_threshold(y, probabilities, self.binary_metric)
+
+    @abstractmethod
+    def predict_prob(self,
+                     x: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
+    def _fit_core(self,
+                  x_processed: np.ndarray,
+                  y_processed: np.ndarray):
+        pass
+
+    def fit(self,
+            x: np.ndarray,
+            y: np.ndarray) -> "BinaryClassifierMixin":
+        self.check_binary_classification(y)
+        x_processed, y_processed = self._preprocess_data(x, y)
+        self._fit_core(x_processed, y_processed)
+        self._generate_binary_threshold(x, y)
+        return self
 
     def predict(self,
                 x: np.ndarray) -> np.ndarray:

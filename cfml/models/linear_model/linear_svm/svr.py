@@ -1,10 +1,10 @@
-from .mixin import LinearSVMMixin
+from .mixin import LinearSVRMixin
 from ...bases import RegressorBase
-from ...svm.mixins import SVRMixin
+from ...svm.mixins import CoreSVRMixin
 
 
 @RegressorBase.register("linear_svr")
-class LinearSVR(SVRMixin, LinearSVMMixin, RegressorBase):
+class LinearSVR(CoreSVRMixin, LinearSVRMixin, RegressorBase):
     def __init__(self, *,
                  lb: float = 1.,
                  eps: float = 0.,

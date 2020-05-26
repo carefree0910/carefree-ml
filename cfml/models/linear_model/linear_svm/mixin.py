@@ -3,7 +3,8 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
 
-from ..mixin import LinearMixin
+from ..mixin import *
+from ....misc.toolkit import Activations
 
 
 class LinearSVMMixin(LinearMixin, metaclass=ABCMeta):
@@ -57,4 +58,16 @@ class LinearSVMMixin(LinearMixin, metaclass=ABCMeta):
         return gradient_dict
 
 
-__all__ = ["LinearSVMMixin"]
+class LinearSVCMixin(LinearBinaryClassifierMixin, LinearSVMMixin, metaclass=ABCMeta):
+    def predict_prob(self,
+                     x: np.ndarray) -> np.ndarray:
+        affine = self.predict_raw(x)
+        sigmoid = Activations.sigmoid(affine * 5.)
+        return np.hstack([1. - sigmoid, sigmoid])
+
+
+class LinearSVRMixin(LinearRegressorMixin, LinearSVMMixin, metaclass=ABCMeta):
+    pass
+
+
+__all__ = ["LinearSVCMixin", "LinearSVRMixin"]

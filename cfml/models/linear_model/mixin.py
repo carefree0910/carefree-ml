@@ -4,7 +4,7 @@ from abc import ABCMeta
 from typing import *
 
 from ..bases import Base
-from ..mixins import NormalizeMixin
+from ..mixins import NormalizeMixin, BinaryClassifierMixin
 from ...misc.optim import GradientDescentMixin
 
 
@@ -69,4 +69,17 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
         return affine
 
 
-__all__ = ["LinearMixin"]
+class LinearRegressorMixin(LinearMixin):
+    def predict(self,
+                x: np.ndarray) -> np.ndarray:
+        return self.predict_raw(x)
+
+
+class LinearBinaryClassifierMixin(BinaryClassifierMixin, LinearMixin, metaclass=ABCMeta):
+    def _fit_core(self,
+                  x_processed: np.ndarray,
+                  y_processed: np.ndarray):
+        self._fit_linear(x_processed, y_processed)
+
+
+__all__ = ["LinearMixin", "LinearRegressorMixin", "LinearBinaryClassifierMixin"]
