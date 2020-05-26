@@ -10,6 +10,7 @@ from cfml.misc.toolkit import timeit, Metrics
 
 breast_cancer = Data.breast_cancer()
 Base.make("svc").fit(breast_cancer.x, breast_cancer.y).plot_loss_curve()
+Base.make("linear_svc").fit(breast_cancer.x, breast_cancer.y).plot_loss_curve()
 
 
 # comparison
