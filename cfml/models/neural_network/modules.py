@@ -60,7 +60,7 @@ class Loss:
            target: np.ndarray) -> float:
         diff = output - target
         self._caches["diff"] = diff
-        return np.abs(diff).mean()
+        return np.abs(diff).mean().item()
 
     def l1_backward(self) -> np.ndarray:
         diff = self._caches["diff"]
