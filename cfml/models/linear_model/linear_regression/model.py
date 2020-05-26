@@ -12,8 +12,6 @@ class LinearRegression(RegressorBase, LinearMixin):
                  fit_intersect: bool = True,
                  normalize_labels: bool = True):
         self._w = self._b = None
-        self._x_mean = self._x_std = None
-        self._y_mean = self._y_std = None
         self._fit_intersect = fit_intersect
         self._normalize_labels = normalize_labels
 

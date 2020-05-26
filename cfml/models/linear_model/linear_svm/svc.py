@@ -15,7 +15,6 @@ class LinearSVC(ClassifierBase, LinearMixin, BinaryClassifierMixin):
                  fit_intersect: bool = True):
         self._lb = lb
         self._w = self._b = None
-        self._x_mean = self._x_std = None
         self._fit_intersect = fit_intersect
 
     def loss_function(self,

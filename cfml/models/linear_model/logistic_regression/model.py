@@ -16,7 +16,6 @@ class LogisticRegression(ClassifierBase, LinearMixin, BinaryClassifierMixin):
         self._lb = lb
         self._fit_intersect = fit_intersect
         self._w = self._b = None
-        self._x_mean = self._x_std = None
         self._sigmoid = Activations("sigmoid")
 
     def gradient_function(self,

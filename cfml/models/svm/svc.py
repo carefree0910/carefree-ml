@@ -19,7 +19,6 @@ class SVC(ClassifierBase, SVMMixin, BinaryClassifierMixin):
         if kernel_config is None:
             kernel_config = {}
         self._kernel = Kernel(kernel, **kernel_config)
-        self._x_mean = self._x_std = None
 
     def fit(self,
             x: np.ndarray,
