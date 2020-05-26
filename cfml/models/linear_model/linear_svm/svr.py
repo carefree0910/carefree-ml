@@ -1,4 +1,4 @@
-from .mixin import LinearSVRMixin
+from .mixins import LinearSVRMixin
 from ...bases import RegressorBase
 from ...svm.mixins import CoreSVRMixin
 

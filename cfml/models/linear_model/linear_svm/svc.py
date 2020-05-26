@@ -1,4 +1,4 @@
-from .mixin import LinearSVCMixin
+from .mixins import LinearSVCMixin
 from ...bases import ClassifierBase
 from ...svm.mixins import CoreSVCMixin
 

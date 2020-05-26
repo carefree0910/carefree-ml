@@ -1,4 +1,4 @@
-from ..mixin import LinearRegressorMixin
+from ..mixins import LinearRegressorMixin
 from ...bases import RegressorBase
 
 

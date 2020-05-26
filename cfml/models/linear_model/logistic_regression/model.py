@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..mixin import LinearBinaryClassifierMixin
+from ..mixins import LinearBinaryClassifierMixin
 from ...bases import ClassifierBase
 from ....misc.toolkit import Activations
 

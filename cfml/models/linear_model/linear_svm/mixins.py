@@ -3,7 +3,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
 
-from ..mixin import *
+from ..mixins import *
 from ....misc.toolkit import Activations
 
 
