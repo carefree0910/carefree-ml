@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import *
 
-from ..base import LinearMixin
+from ..mixin import LinearMixin
 from ...bases import RegressorBase
 
 

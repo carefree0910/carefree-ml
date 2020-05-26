@@ -3,7 +3,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
 
-from ..base import LinearMixin
+from ..mixin import LinearMixin
 
 
 class LinearSVMMixin(LinearMixin, metaclass=ABCMeta):

@@ -3,7 +3,7 @@ import numpy as np
 from typing import Dict
 
 from .mixin import LinearSVMMixin
-from ..base import LinearMixin
+from ..mixin import LinearMixin
 from ...bases import ClassifierBase
 from ...mixins import BinaryClassifierMixin
 from ....misc.toolkit import Activations
