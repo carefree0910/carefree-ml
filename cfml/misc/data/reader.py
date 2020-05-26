@@ -29,8 +29,8 @@ class dataset(NamedTuple):
     def from_bunch(cls, dtype: str, bunch: Bunch) -> "dataset":
         x = bunch.data.astype(np.float32)
         y = bunch.target.reshape([-1, 1]).astype(np.int if dtype == "clf" else np.float32)
-        label_names = bunch.target_names
-        feature_names = bunch.feature_names
+        label_names = bunch.get("target_names")
+        feature_names = bunch.get("feature_names")
         return dataset(x, y, dtype, "label", label_names, feature_names)
 
     def to_one_hot(self, categories="auto") -> "dataset":
