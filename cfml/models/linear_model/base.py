@@ -24,7 +24,8 @@ class LinearMixin(GradientDescentMixin, metaclass=ABCMeta):
 
     def loss_function(self,
                       x_batch: np.ndarray,
-                      y_batch: np.ndarray) -> Dict[str, Any]:
+                      y_batch: np.ndarray,
+                      batch_indices: np.ndarray) -> Dict[str, Any]:
         predictions = self._predict_normalized(x_batch)
         diff = predictions - y_batch
         return {"diff": diff, "loss": np.linalg.norm(diff).item()}
@@ -32,6 +33,7 @@ class LinearMixin(GradientDescentMixin, metaclass=ABCMeta):
     def gradient_function(self,
                           x_batch: np.ndarray,
                           y_batch: np.ndarray,
+                          batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         diff = loss_dict["diff"]
         gradients = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}

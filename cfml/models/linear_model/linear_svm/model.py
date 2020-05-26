@@ -19,7 +19,8 @@ class LinearSVM(ClassifierBase, LinearMixin):
 
     def loss_function(self,
                       x_batch: np.ndarray,
-                      y_batch: np.ndarray) -> Dict[str, Any]:
+                      y_batch: np.ndarray,
+                      batch_indices: np.ndarray) -> Dict[str, Any]:
         w_norm = np.linalg.norm(self._w)
         predictions = self._predict_normalized(x_batch)
         diff = 1. - y_batch * predictions
@@ -33,6 +34,7 @@ class LinearSVM(ClassifierBase, LinearMixin):
     def gradient_function(self,
                           x_batch: np.ndarray,
                           y_batch: np.ndarray,
+                          batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         if loss_dict["loss"] <= 0.:
             zero = np.zeros(1, np.float32)

@@ -44,13 +44,15 @@ class GradientDescentMixin(ABC):
     @abstractmethod
     def loss_function(self,
                       x_batch: np.ndarray,
-                      y_batch: np.ndarray) -> Dict[str, Any]:
+                      y_batch: np.ndarray,
+                      batch_indices: np.ndarray) -> Dict[str, Any]:
         """ this method calculate the loss of one batch
 
         Parameters
         ----------
         x_batch : np.ndarray, one batch of training set features
         y_batch : np.ndarray, one batch of training set labels
+        batch_indices : np.ndarray, indices of current batch
 
         Returns
         -------
@@ -63,6 +65,7 @@ class GradientDescentMixin(ABC):
     def gradient_function(self,
                           x_batch: np.ndarray,
                           y_batch: np.ndarray,
+                          batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         """ this method calculate the gradients of one batch
 
@@ -70,6 +73,7 @@ class GradientDescentMixin(ABC):
         ----------
         x_batch : np.ndarray, one batch of training set features
         y_batch : np.ndarray, one batch of training set labels
+        batch_indices : np.ndarray, indices of current batch
         loss_dict : Dict[str, Any], results from self.loss_function
 
         Returns
@@ -114,8 +118,8 @@ class GradientDescentMixin(ABC):
             for j in range(n_step):
                 batch_indices = indices[j*b_size:(j+1)*b_size]
                 x_batch, y_batch = x[batch_indices], y[batch_indices]
-                loss_dict = self.loss_function(x_batch, y_batch)
-                gradient_dict = self.gradient_function(x_batch, y_batch, loss_dict)
+                loss_dict = self.loss_function(x_batch, y_batch, batch_indices)
+                gradient_dict = self.gradient_function(x_batch, y_batch, batch_indices, loss_dict)
                 self._optimizer.step(self, gradient_dict)
                 local_losses.append(loss_dict["loss"])
             iterator.set_postfix({"loss": fix_float_to_length(local_losses[0], 6)})

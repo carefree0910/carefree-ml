@@ -21,8 +21,9 @@ class LogisticRegression(ClassifierBase, LinearMixin):
     def gradient_function(self,
                           x_batch: np.ndarray,
                           y_batch: np.ndarray,
+                          batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
-        gradient_dict = super().gradient_function(x_batch, y_batch, loss_dict)
+        gradient_dict = super().gradient_function(x_batch, y_batch, batch_indices, loss_dict)
         if self._lb > 0.:
             gradient_dict["_w"] += self._lb * self._w
         return gradient_dict
