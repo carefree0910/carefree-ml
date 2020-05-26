@@ -2,10 +2,12 @@ import numpy as np
 
 from abc import ABCMeta
 from typing import *
+from sklearn.preprocessing import OneHotEncoder
 
 from .modules import *
 from ..mixins import NormalizeMixin, BinaryClassifierMixin
 from ...misc.optim import GradientDescentMixin
+from ...misc.toolkit import Activations
 
 
 class FCNNMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
@@ -161,10 +163,28 @@ class FCNNInitializerMixin:
             self._hidden_layers = [Layer(*layer) for layer in hidden_layers]
 
 
+class FCNNClassifierMixin(BinaryClassifierMixin, FCNNMixin):
+    @staticmethod
+    def _preprocess_data(x: np.ndarray,
+                         y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        y_onehot = OneHotEncoder(sparse=False).fit_transform(y)
+        return x, y_onehot
+
+    def _fit_core(self,
+                  x_processed: np.ndarray,
+                  y_processed: np.ndarray):
+        self._fit_fcnn(x_processed, y_processed)
+
+    def predict_prob(self,
+                     x: np.ndarray) -> np.ndarray:
+        affine = self.predict_raw(x)
+        return Activations.softmax(affine)
+
+
 class FCNNRegressorMixin(FCNNMixin, metaclass=ABCMeta):
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
         return self.predict_raw(x)
 
 
-__all__ = ["FCNNInitializerMixin", "FCNNRegressorMixin"]
+__all__ = ["FCNNInitializerMixin", "FCNNClassifierMixin", "FCNNRegressorMixin"]
