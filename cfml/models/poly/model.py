@@ -21,7 +21,7 @@ class Polygon(RegressorBase):
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
         if self._param is None:
-            raise ValueError("Polygon need to be fit before predict")
+            self.raise_not_fit(self)
         return np.polyval(self._param, x.ravel()).reshape([-1, 1])
 
 

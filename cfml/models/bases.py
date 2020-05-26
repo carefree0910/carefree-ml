@@ -51,6 +51,10 @@ class Base(ABC):
     def make(model: str, *args, **kwargs) -> "Base":
         return model_dict[model](*args, **kwargs)
 
+    @staticmethod
+    def raise_not_fit(model):
+        raise ValueError(f"{type(model).__name__} need to be fit before predict")
+
     @classmethod
     def register(cls, name):
         global model_dict

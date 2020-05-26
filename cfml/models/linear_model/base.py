@@ -3,6 +3,7 @@ import numpy as np
 from abc import ABCMeta
 from typing import *
 
+from ..bases import Base
 from ...misc.optim import GradientDescentMixin
 
 
@@ -56,7 +57,7 @@ class LinearMixin(GradientDescentMixin, metaclass=ABCMeta):
     def _predict_normalized(self,
                             x_normalized: np.ndarray) -> np.ndarray:
         if self._w is None:
-            raise ValueError("LinearRegression need to be fit before predict")
+            Base.raise_not_fit(self)
         affine = x_normalized.dot(self._w)
         if self.fit_intersect:
             affine += self._b
