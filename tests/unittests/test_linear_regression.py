@@ -18,7 +18,7 @@ prices = Data().read("prices.txt")
 # comparison
 
 lr = Base.make("linear_regression")
-poly = Base.make("poly")
+poly = Base.make("poly", deg=1)
 with timeit("cfml_lr", precision=8):
     lr.fit(prices.x, prices.y)
 with timeit("cfml_poly", precision=8):
