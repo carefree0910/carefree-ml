@@ -1,4 +1,4 @@
-from .model import LinearSVM
+from .svc import LinearSVC
 
 
-__all__ = ["LinearSVM"]
+__all__ = ["LinearSVC"]

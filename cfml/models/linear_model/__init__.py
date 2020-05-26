@@ -3,4 +3,4 @@ from .logistic_regression import *
 from .linear_svm import *
 
 
-__all__ = ["LinearRegression", "LogisticRegression", "LinearSVM"]
+__all__ = ["LinearRegression", "LogisticRegression", "LinearSVC"]

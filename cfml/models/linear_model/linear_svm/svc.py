@@ -8,8 +8,8 @@ from ...mixins import BinaryClassifierMixin
 from ....misc.toolkit import Activations
 
 
-@ClassifierBase.register("linear_svm")
-class LinearSVM(ClassifierBase, LinearMixin, BinaryClassifierMixin):
+@ClassifierBase.register("linear_svc")
+class LinearSVC(ClassifierBase, LinearMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  fit_intersect: bool = True):
@@ -51,7 +51,7 @@ class LinearSVM(ClassifierBase, LinearMixin, BinaryClassifierMixin):
 
     def fit(self,
             x: np.ndarray,
-            y: np.ndarray) -> "LinearSVM":
+            y: np.ndarray) -> "LinearSVC":
         self.check_binary_classification(y)
         y_svm = y.copy()
         y_svm[y_svm == 0] = -1
@@ -70,4 +70,4 @@ class LinearSVM(ClassifierBase, LinearMixin, BinaryClassifierMixin):
         return np.hstack([1. - sigmoid, sigmoid])
 
 
-__all__ = ["LinearSVM"]
+__all__ = ["LinearSVC"]
