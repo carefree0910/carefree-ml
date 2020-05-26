@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import *
 
-from .mixin import SVMMixin
+from .mixins import SVMMixin
 from .kernel import Kernel
 from ..bases import ClassifierBase
 from ..mixins import BinaryClassifierMixin
