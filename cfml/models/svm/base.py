@@ -73,11 +73,5 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
         affine = self._alpha.dot(projection) + self._b
         return affine.T
 
-    def predict_prob(self,
-                     x: np.ndarray) -> np.ndarray:
-        affine = NormalizeMixin.predict(self, x)
-        sigmoid = Activations.sigmoid(np.clip(affine, -2., 2.) * 5.)
-        return np.hstack([1. - sigmoid, sigmoid])
-
 
 __all__ = ["SVMMixin"]
