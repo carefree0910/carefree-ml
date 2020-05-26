@@ -1,27 +1,21 @@
 import numpy as np
 
-from typing import Dict
-
 from .mixin import LinearSVMMixin
 from ..mixin import LinearMixin
 from ...bases import ClassifierBase
 from ...mixins import BinaryClassifierMixin
 from ....misc.toolkit import Activations
+from ...svm.mixins import SVCMixin
 
 
 @ClassifierBase.register("linear_svc")
-class LinearSVC(ClassifierBase, LinearSVMMixin, BinaryClassifierMixin):
+class LinearSVC(ClassifierBase, SVCMixin, LinearSVMMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  fit_intersect: bool = True):
         self._lb = lb
         self._w = self._b = None
         self._fit_intersect = fit_intersect
-
-    def get_diffs(self,
-                  y_batch: np.ndarray,
-                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
-        return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
 
     def fit(self,
             x: np.ndarray,

@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import *
 
-from .mixins import SVMMixin
+from .mixins import *
 from .kernel import Kernel
 from ..bases import ClassifierBase
 from ..mixins import BinaryClassifierMixin
@@ -10,7 +10,7 @@ from ...misc.toolkit import Activations
 
 
 @ClassifierBase.register("svc")
-class SVC(ClassifierBase, SVMMixin, BinaryClassifierMixin):
+class SVC(ClassifierBase, SVCMixin, SVMMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  kernel: str = "rbf",
@@ -19,11 +19,6 @@ class SVC(ClassifierBase, SVMMixin, BinaryClassifierMixin):
         if kernel_config is None:
             kernel_config = {}
         self._kernel = Kernel(kernel, **kernel_config)
-
-    def get_diffs(self,
-                  y_batch: np.ndarray,
-                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
-        return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
 
     def fit(self,
             x: np.ndarray,

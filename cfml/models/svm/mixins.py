@@ -84,4 +84,34 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
         return affine.T
 
 
-__all__ = ["SVMMixin"]
+class SVCMixin:
+    @staticmethod
+    def get_diffs(y_batch: np.ndarray,
+                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
+        return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
+
+
+class SVRMixin:
+    @property
+    def eps(self):
+        return getattr(self, "_eps", 0.)
+
+    @property
+    def raw_lb(self):
+        return getattr(self, "_raw_lb", None)
+
+    def get_diffs(self,
+                  y_batch: np.ndarray,
+                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
+        if self.raw_lb == "auto":
+            self._lb = float(len(y_batch))
+        raw_diff = predictions - y_batch
+        l1_diff = np.abs(raw_diff)
+        if self.eps <= 0.:
+            tube_diff = l1_diff
+        else:
+            tube_diff = l1_diff - self.eps
+        return {"diff": tube_diff, "delta_coeff": np.sign(raw_diff)}
+
+
+__all__ = ["SVMMixin", "SVCMixin", "SVRMixin"]
