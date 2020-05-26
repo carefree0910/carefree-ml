@@ -17,7 +17,7 @@ fcnn = Base.make("fcnn_reg")
 with timeit("cfml", precision=8):
     fcnn.fit(boston.x, boston.y)
 sk_reg = MLPRegressor()
-with timeit("sklearn_svr", precision=8):
+with timeit("sklearn", precision=8):
     sk_reg.fit(boston.x, boston.y.ravel())
 
 print(f"cfml     mse : {Metrics.mse(boston.y, fcnn.predict(boston.x)):6.4f}")
