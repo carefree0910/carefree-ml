@@ -9,8 +9,10 @@ from ....misc.toolkit import Activations
 class LogisticRegression(LinearBinaryClassifierMixin, ClassifierBase):
     def __init__(self, *,
                  lb: float = 0.,
+                 lr: float = 0.1,
                  fit_intersect: bool = True):
         self._lb = lb
+        self._lr = lr
         self._fit_intersect = fit_intersect
         self._w = self._b = None
         self._sigmoid = Activations("sigmoid")

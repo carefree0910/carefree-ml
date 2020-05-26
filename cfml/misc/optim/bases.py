@@ -28,6 +28,22 @@ class Optimizer(ABC):
 
 
 class GradientDescentMixin(ABC):
+    @property
+    def lr(self):
+        return getattr(self, "_lr", 0.01)
+
+    @property
+    def opt(self):
+        return getattr(self, "_opt", "sgd")
+
+    @property
+    def epoch(self):
+        return getattr(self, "_epoch", 20)
+
+    @property
+    def batch_size(self):
+        return getattr(self, "_batch_size", 32)
+
     @abstractmethod
     def parameter_names(self) -> List[str]:
         """ this method returns all parameters' names, each name should correspond to a property
@@ -83,12 +99,8 @@ class GradientDescentMixin(ABC):
 
         """
 
-    def _setup_optimizer(self):
-        optimizer = getattr(self, "_optimizer", None)
-        if optimizer is None:
-            self.setup_optimizer("sgd", 0.01)
-        elif not isinstance(optimizer, Optimizer):
-            raise ValueError(f"optimizer should be subclass of Optimizer, '{type(optimizer)}' found")
+    def _setup_optimizer(self, **kwargs):
+        self._optimizer = optimizer_dict[self.opt](self.lr, **kwargs)
 
     def setup_optimizer(self,
                         optimizer: str,
@@ -97,9 +109,11 @@ class GradientDescentMixin(ABC):
                         epoch: int = 20,
                         batch_size: int = 32,
                         **kwargs) -> "GradientDescentMixin":
+        self._lr = lr
+        self._opt = optimizer
         self._epoch = epoch
         self._batch_size = batch_size
-        self._optimizer = optimizer_dict[optimizer](lr, **kwargs)
+        self._setup_optimizer(**kwargs)
         return self
 
     def _gradient_descent(self,
@@ -107,10 +121,10 @@ class GradientDescentMixin(ABC):
                           y: np.ndarray):
         self._setup_optimizer()
         n_sample = len(x)
-        b_size = min(n_sample, self._batch_size)
+        b_size = min(n_sample, self.batch_size)
         n_step = n_sample // b_size
         n_step += int(n_step * b_size < n_sample)
-        iterator = tqdm(range(self._epoch), total=self._epoch)
+        iterator = tqdm(range(self.epoch), total=self.epoch)
         self._losses = []
         for _ in iterator:
             local_losses = []

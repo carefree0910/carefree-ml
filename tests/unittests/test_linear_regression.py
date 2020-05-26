@@ -11,7 +11,6 @@ prices = Data().read("prices.txt")
 (
     Base
         .make("linear_regression")
-        .setup_optimizer("sgd", 0.1)
         .fit(prices.x, prices.y)
         .visualize1d(prices.x, prices.y)
         .plot_loss_curve()
@@ -20,7 +19,7 @@ prices = Data().read("prices.txt")
 
 # comparison
 
-lr = Base.make("linear_regression").setup_optimizer("sgd", 0.1)
+lr = Base.make("linear_regression")
 poly = Base.make("poly")
 with timeit("cfml_lr", precision=8):
     lr.fit(prices.x, prices.y)
