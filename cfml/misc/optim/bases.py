@@ -105,7 +105,8 @@ class GradientDescentMixin(ABC):
         """
 
     def _setup_optimizer(self, **kwargs):
-        self._optimizer = optimizer_dict[self.opt](self.lr, **kwargs)
+        if getattr(self, "_optimizer", None) is None:
+            self._optimizer = optimizer_dict[self.opt](self.lr, **kwargs)
 
     def setup_optimizer(self,
                         optimizer: str,
