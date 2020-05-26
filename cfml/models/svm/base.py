@@ -5,11 +5,12 @@ from typing import *
 
 from .kernel import Kernel
 from ..bases import Base
+from ..mixins import NormalizeMixin
 from ...misc.optim import GradientDescentMixin
 from ...misc.toolkit import Activations, Metrics
 
 
-class SVMMixin(GradientDescentMixin, metaclass=ABCMeta):
+class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
     @property
     def lb(self):
         return getattr(self, "_lb", 1.)
@@ -21,10 +22,6 @@ class SVMMixin(GradientDescentMixin, metaclass=ABCMeta):
             kernel = Kernel()
             setattr(self, "_kernel", kernel)
         return kernel
-
-    @property
-    def normalize_labels(self):
-        return getattr(self, "_normalize_labels", False)
 
     def parameter_names(self) -> List[str]:
         return ["_alpha", "_b"]
@@ -63,17 +60,11 @@ class SVMMixin(GradientDescentMixin, metaclass=ABCMeta):
     def _fit_svm(self,
                  x: np.ndarray,
                  y: np.ndarray):
-        self._x_mean, self._x_std = x.mean(0), x.std(0)
-        self._x_normalized = (x - self._x_mean) / self._x_std
+        self._initialize(x, y)
         self._k_mat = self.kernel.project(self._x_normalized, self._x_normalized)
         self._alpha = np.zeros([1, x.shape[0]], np.float32)
         self._b = np.zeros([1, 1], np.float32)
-        if not self.normalize_labels:
-            y_normalized = y
-        else:
-            self._y_mean, self._y_std = y.mean(0), y.std(0)
-            y_normalized = (y - self._y_mean) / self._y_std
-        self._gradient_descent(self._x_normalized, y_normalized)
+        self._gradient_descent(self._x_normalized, self._y_normalized)
         probabilities = self.predict_prob(x)
         self.threshold = Metrics.get_binary_threshold(y, probabilities, "acc")
 
@@ -87,7 +78,7 @@ class SVMMixin(GradientDescentMixin, metaclass=ABCMeta):
 
     def predict_prob(self,
                      x: np.ndarray) -> np.ndarray:
-        affine = self._predict_normalized((x - self._x_mean) / self._x_std)
+        affine = NormalizeMixin.predict(self, x)
         sigmoid = Activations.sigmoid(np.clip(affine, -2., 2.) * 5.)
         return np.hstack([1. - sigmoid, sigmoid])
 
