@@ -59,7 +59,7 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
     def _fit_svm(self,
                  x: np.ndarray,
                  y: np.ndarray):
-        self._initialize(x, y)
+        self._initialize_statistics(x, y)
         self._k_mat = self.kernel.project(self._x_normalized, self._x_normalized)
         self._alpha = np.zeros([1, x.shape[0]], np.float32)
         self._b = np.zeros([1, 1], np.float32)

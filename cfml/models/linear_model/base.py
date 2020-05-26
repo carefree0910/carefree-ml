@@ -41,7 +41,7 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
     def _fit_linear(self,
                     x: np.ndarray,
                     y: np.ndarray):
-        self._initialize(x, y)
+        self._initialize_statistics(x, y)
         self._w = np.random.random([x.shape[1], 1])
         if self.fit_intersect:
             self._b = np.random.random([1, 1])

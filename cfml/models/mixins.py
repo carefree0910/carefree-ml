@@ -54,9 +54,9 @@ class NormalizeMixin(ABC):
     def normalize_labels(self):
         return getattr(self, "_normalize_labels", False)
 
-    def _initialize(self,
-                    x: np.ndarray,
-                    y: np.ndarray):
+    def _initialize_statistics(self,
+                               x: np.ndarray,
+                               y: np.ndarray):
         self._x_mean, self._x_std = x.mean(0), x.std(0)
         self._x_normalized = self.normalize_x(x)
         if not self.normalize_labels:
