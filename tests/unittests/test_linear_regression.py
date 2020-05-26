@@ -1,8 +1,6 @@
 from sklearn.linear_model import LinearRegression
 
-from cfml.models import Base
-from cfml.misc.data import Data
-from cfml.misc.toolkit import timeit, Metrics
+from cfml import *
 
 
 # basic usage
