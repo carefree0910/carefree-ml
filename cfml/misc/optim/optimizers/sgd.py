@@ -15,9 +15,7 @@ class SGD(Optimizer):
              model: GradientDescentMixin,
              gradient_dict: Dict[str, np.ndarray]):
         for key, value in gradient_dict.items():
-            attr = getattr(model, key)
-            attr -= self._lr * value
-            setattr(model, key, attr)
+            self.apply(key, value, model)
 
 
 __all__ = ["SGD"]

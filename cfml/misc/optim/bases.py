@@ -21,6 +21,11 @@ class Optimizer(ABC):
              gradient_dict: Dict[str, np.ndarray]):
         pass
 
+    def apply(self, key, gradient, model):
+        attr = getattr(model, key)
+        attr -= self._lr * gradient
+        setattr(model, key, attr)
+
     @classmethod
     def register(cls, name):
         global optimizer_dict
