@@ -10,6 +10,10 @@ from ...misc.optim import GradientDescentMixin
 
 class LinearMixin(NormalizeMixin, GradientDescentMixin):
     @property
+    def lb(self):
+        return getattr(self, "_lb", 0.)
+
+    @property
     def fit_intersect(self):
         return getattr(self, "_fit_intersect", True)
 
@@ -34,6 +38,8 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         diff = loss_dict["diff"]
         gradient_dict = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}
+        if self.lb > 0.:
+            gradient_dict["_w"] += self.lb * self._w
         if self.fit_intersect:
             gradient_dict["_b"] = diff.mean(0).reshape([1, 1])
         return gradient_dict
