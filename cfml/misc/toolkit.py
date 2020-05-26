@@ -455,6 +455,14 @@ class Activations:
         plt.show()
 
     @staticmethod
+    def relu(x):
+        return np.maximum(0., x)
+
+    @staticmethod
+    def relu_grad(forward):
+        return (forward != 0.).astype(np.float32)
+
+    @staticmethod
     def sigmoid(x):
         return 1. / (1. + np.exp(-x))
 
