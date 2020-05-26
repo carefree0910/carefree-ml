@@ -141,4 +141,4 @@ class FCNNRegressorMixin(FCNNMixin, metaclass=ABCMeta):
         return self.predict_raw(x)
 
 
-__all__ = ["Layer", "Loss", "FCNNRegressorMixin"]
+__all__ = ["FCNNRegressorMixin"]

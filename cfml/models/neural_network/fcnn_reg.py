@@ -1,6 +1,6 @@
 from typing import *
 
-from .bases import *
+from .mixins import *
 from .modules import *
 from ..bases import RegressorBase
 
