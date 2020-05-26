@@ -33,10 +33,10 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
                           batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         diff = loss_dict["diff"]
-        gradients = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}
+        gradient_dict = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}
         if self.fit_intersect:
-            gradients["_b"] = diff.mean(0).reshape([1, 1])
-        return gradients
+            gradient_dict["_b"] = diff.mean(0).reshape([1, 1])
+        return gradient_dict
 
     def _fit_linear(self,
                     x: np.ndarray,
