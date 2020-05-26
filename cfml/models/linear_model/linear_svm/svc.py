@@ -1,7 +1,6 @@
 import numpy as np
 
 from .mixin import LinearSVMMixin
-from ..mixin import LinearMixin
 from ...bases import ClassifierBase
 from ...mixins import BinaryClassifierMixin
 from ....misc.toolkit import Activations
@@ -9,7 +8,7 @@ from ...svm.mixins import SVCMixin
 
 
 @ClassifierBase.register("linear_svc")
-class LinearSVC(ClassifierBase, SVCMixin, LinearSVMMixin, BinaryClassifierMixin):
+class LinearSVC(SVCMixin, BinaryClassifierMixin, LinearSVMMixin, ClassifierBase):
     def __init__(self, *,
                  lb: float = 1.,
                  fit_intersect: bool = True):
@@ -27,13 +26,9 @@ class LinearSVC(ClassifierBase, SVCMixin, LinearSVMMixin, BinaryClassifierMixin)
         self._generate_binary_threshold(x, y)
         return self
 
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        return BinaryClassifierMixin.predict(self, x)
-
     def predict_prob(self,
                      x: np.ndarray) -> np.ndarray:
-        affine = LinearMixin.predict(self, x)
+        affine = LinearSVMMixin.predict(self, x)
         sigmoid = Activations.sigmoid(affine * 5.)
         return np.hstack([1. - sigmoid, sigmoid])
 
