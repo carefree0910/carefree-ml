@@ -9,6 +9,8 @@ class FCNNClassifier(FCNNInitializerMixin, FCNNClassifierMixin, ClassifierBase):
         kwargs.setdefault("loss", "cross_entropy")
         kwargs.setdefault("epoch", 100)
         super().__init__(**kwargs)
+        if self._opt == "sgd":
+            self._optimizer_config = kwargs.get("optimizer_config", {"momentum": 0.999})
 
 
 __all__ = ["FCNNClassifier"]

@@ -49,6 +49,10 @@ class GradientDescentMixin(ABC):
     def batch_size(self):
         return getattr(self, "_batch_size", 32)
 
+    @property
+    def optimizer_config(self):
+        return getattr(self, "_optimizer_config", {})
+
     @abstractmethod
     def parameter_names(self) -> List[str]:
         """ this method returns all parameters' names, each name should correspond to a property
@@ -125,7 +129,7 @@ class GradientDescentMixin(ABC):
     def _gradient_descent(self,
                           x: np.ndarray,
                           y: np.ndarray):
-        self._setup_optimizer()
+        self._setup_optimizer(**self.optimizer_config)
         n_sample = len(x)
         b_size = min(n_sample, self.batch_size)
         n_step = n_sample // b_size
