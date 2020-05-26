@@ -1,6 +1,6 @@
 import numpy as np
 
-from typing import *
+from typing import Dict
 
 from .mixin import LinearSVMMixin
 from ..base import LinearMixin
@@ -10,7 +10,7 @@ from ....misc.toolkit import Activations
 
 
 @ClassifierBase.register("linear_svc")
-class LinearSVC(ClassifierBase, LinearMixin, LinearSVMMixin, BinaryClassifierMixin):
+class LinearSVC(ClassifierBase, LinearSVMMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  fit_intersect: bool = True):
@@ -18,31 +18,10 @@ class LinearSVC(ClassifierBase, LinearMixin, LinearSVMMixin, BinaryClassifierMix
         self._w = self._b = None
         self._fit_intersect = fit_intersect
 
-    def loss_function(self,
-                      x_batch: np.ndarray,
-                      y_batch: np.ndarray,
-                      batch_indices: np.ndarray) -> Dict[str, Any]:
-        predictions = self._predict_normalized(x_batch)
-        diff = 1. - y_batch * predictions
-        return self.loss_core(diff)
-
-    def gradient_function(self,
-                          x_batch: np.ndarray,
-                          y_batch: np.ndarray,
-                          batch_indices: np.ndarray,
-                          loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
-        has_critical, critical_mask = map(loss_dict.get, ["has_critical", "critical_mask"])
-        if not has_critical:
-            delta = None
-            gradient_dict = {"_w": self._w}
-        else:
-            x_critical, y_critical = x_batch[critical_mask], y_batch[critical_mask]
-            delta = -self._lb * y_critical
-            gradient_dict = {"_w": self._w + (x_critical * delta).sum(0).reshape([-1, 1])}
-        if self.fit_intersect:
-            gb = np.zeros([1, 1], np.float32) if delta is None else delta.sum(0).reshape([1, 1])
-            gradient_dict["_b"] = gb
-        return gradient_dict
+    def get_diffs(self,
+                  y_batch: np.ndarray,
+                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
+        return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
 
     def fit(self,
             x: np.ndarray,
