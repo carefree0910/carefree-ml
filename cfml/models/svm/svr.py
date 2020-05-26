@@ -5,11 +5,10 @@ from typing import *
 from .mixin import SVMMixin
 from .kernel import Kernel
 from ..bases import RegressorBase
-from ..mixins import NormalizeMixin
 
 
 @RegressorBase.register("svr")
-class SVR(RegressorBase, SVMMixin, NormalizeMixin):
+class SVR(RegressorBase, SVMMixin):
     def __init__(self, *,
                  eps: float = 0.,
                  lb: Union[str, float] = "auto",
@@ -43,7 +42,7 @@ class SVR(RegressorBase, SVMMixin, NormalizeMixin):
 
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
-        return NormalizeMixin.predict(self, x)
+        return SVMMixin.predict(self, x)
 
 
 __all__ = ["SVR"]
