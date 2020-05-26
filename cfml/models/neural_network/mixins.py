@@ -1,6 +1,6 @@
 import numpy as np
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from typing import *
 
 from .modules import *
