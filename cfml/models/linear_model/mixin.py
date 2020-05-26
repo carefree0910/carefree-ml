@@ -8,7 +8,7 @@ from ..mixins import NormalizeMixin
 from ...misc.optim import GradientDescentMixin
 
 
-class LinearMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
+class LinearMixin(NormalizeMixin, GradientDescentMixin):
     @property
     def fit_intersect(self):
         return getattr(self, "_fit_intersect", True)
