@@ -111,6 +111,10 @@ class BinaryClassifierMixin(ABC):
     def binary_metric(self):
         return getattr(self, "_binary_metric", "acc")
 
+    @property
+    def allow_multiclass(self):
+        return getattr(self, "_allow_multiclass", False)
+
     def check_binary_classification(self, y: np.ndarray):
         num_classes = y.max() + 1
         if num_classes > 2:
@@ -144,15 +148,22 @@ class BinaryClassifierMixin(ABC):
     def fit(self,
             x: np.ndarray,
             y: np.ndarray) -> "BinaryClassifierMixin":
-        self.check_binary_classification(y)
+        if not self.allow_multiclass:
+            self.check_binary_classification(y)
         x_processed, y_processed = self._preprocess_data(x, y)
         self._fit_core(x_processed, y_processed)
-        self._generate_binary_threshold(x, y)
+        self._is_binary = False
+        if not self.allow_multiclass or y_processed.shape[1] == 2:
+            self._generate_binary_threshold(x, y)
+            self._is_binary = True
         return self
 
     def predict(self,
                 x: np.ndarray) -> np.ndarray:
-        return (self.predict_prob(x)[..., 1] >= self.threshold).astype(np.int).reshape([-1, 1])
+        probabilities = self.predict_prob(x)
+        if not self._is_binary:
+            return probabilities.argmax(1).reshape([-1, 1])
+        return (probabilities[..., 1] >= self.threshold).astype(np.int).reshape([-1, 1])
 
 
 __all__ = ["StrMixin", "NormalizeMixin", "BinaryClassifierMixin"]
