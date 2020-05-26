@@ -1,4 +1,5 @@
 from .linear_model import *
+from .naive_bayes import *
 from .poly import *
 from .bases import *
 

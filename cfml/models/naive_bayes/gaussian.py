@@ -2,8 +2,8 @@ import numpy as np
 
 from functools import partial
 
-from ...bases import ClassifierBase
-from ....misc.toolkit import Activations
+from ..bases import ClassifierBase
+from ...misc.toolkit import Activations
 
 
 @ClassifierBase.register("gaussian_nb")
