@@ -1,6 +1,6 @@
 import numpy as np
 
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 from typing import *
 
 from .kernel import Kernel
@@ -25,32 +25,42 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
     def parameter_names(self) -> List[str]:
         return ["_alpha", "_b"]
 
+    @abstractmethod
+    def get_diffs(self,
+                  y_batch: np.ndarray,
+                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
+        pass
+
     def loss_function(self,
                       x_batch: np.ndarray,
                       y_batch: np.ndarray,
                       batch_indices: np.ndarray) -> Dict[str, Any]:
         ak = self._alpha.dot(self._k_mat)
         predictions = ak.T[batch_indices] + self._b
-        diff = 1. - y_batch * predictions
+        diffs = self.get_diffs(y_batch, predictions)
+        diff = diffs["diff"]
         critical_mask = (diff > 0).ravel()
         loss = 0.5 * ak.dot(self._alpha.T).item()
         has_critical = np.any(critical_mask)
         if has_critical:
             loss += self.lb * diff[critical_mask].mean().item()
-        return {"loss": loss, "ak": ak, "has_critical": has_critical, "critical_mask": critical_mask}
+        diffs.update({"loss": loss, "ak": ak, "has_critical": has_critical, "critical_mask": critical_mask})
+        return diffs
 
     def gradient_function(self,
                           x_batch: np.ndarray,
                           y_batch: np.ndarray,
                           batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
+        delta_coeff = loss_dict["delta_coeff"]
         ak, has_critical, critical_mask = map(loss_dict.get, ["ak", "has_critical", "critical_mask"])
         if not has_critical:
             delta = None
             gradient_dict = {"_alpha": ak}
         else:
-            k_critical, y_critical = self._k_mat[batch_indices][critical_mask], y_batch[critical_mask]
-            delta = -self.lb * y_critical
+            k_critical = self._k_mat[batch_indices][critical_mask]
+            coeff_critical = delta_coeff[critical_mask]
+            delta = self.lb * coeff_critical
             gradient_dict = {"_alpha": ak + (k_critical * delta).mean(0).reshape([1, -1])}
         gb = np.zeros([1, 1], np.float32) if delta is None else delta.mean(0).reshape([1, 1])
         gradient_dict["_b"] = gb

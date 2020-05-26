@@ -20,6 +20,11 @@ class SVC(ClassifierBase, SVMMixin, BinaryClassifierMixin):
             kernel_config = {}
         self._kernel = Kernel(kernel, **kernel_config)
 
+    def get_diffs(self,
+                  y_batch: np.ndarray,
+                  predictions: np.ndarray) -> Dict[str, np.ndarray]:
+        return {"diff": 1. - y_batch * predictions, "delta_coeff": -y_batch}
+
     def fit(self,
             x: np.ndarray,
             y: np.ndarray) -> "SVC":
