@@ -2,6 +2,7 @@ import numpy as np
 
 from typing import *
 
+from .mixin import LinearSVMMixin
 from ..base import LinearMixin
 from ...bases import ClassifierBase
 from ...mixins import BinaryClassifierMixin
@@ -9,7 +10,7 @@ from ....misc.toolkit import Activations
 
 
 @ClassifierBase.register("linear_svc")
-class LinearSVC(ClassifierBase, LinearMixin, BinaryClassifierMixin):
+class LinearSVC(ClassifierBase, LinearMixin, LinearSVMMixin, BinaryClassifierMixin):
     def __init__(self, *,
                  lb: float = 1.,
                  fit_intersect: bool = True):
@@ -23,12 +24,7 @@ class LinearSVC(ClassifierBase, LinearMixin, BinaryClassifierMixin):
                       batch_indices: np.ndarray) -> Dict[str, Any]:
         predictions = self._predict_normalized(x_batch)
         diff = 1. - y_batch * predictions
-        critical_mask = (diff > 0).ravel()
-        loss = 0.5 * np.linalg.norm(self._w)
-        has_critical = np.any(critical_mask)
-        if has_critical:
-            loss += self._lb * diff[critical_mask].mean()
-        return {"loss": loss, "has_critical": has_critical, "critical_mask": critical_mask}
+        return self.loss_core(diff)
 
     def gradient_function(self,
                           x_batch: np.ndarray,
