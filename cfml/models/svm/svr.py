@@ -8,7 +8,7 @@ from ..bases import RegressorBase
 
 
 @RegressorBase.register("svr")
-class SVR(RegressorBase, SVRMixin, SVMMixin):
+class SVR(SVRMixin, SVMMixin, RegressorBase):
     def __init__(self, *,
                  eps: float = 0.,
                  lb: Union[str, float] = "auto",
@@ -20,16 +20,6 @@ class SVR(RegressorBase, SVRMixin, SVMMixin):
             kernel_config = {}
         self._kernel = Kernel(kernel, **kernel_config)
         self._normalize_labels = True
-
-    def fit(self,
-            x: np.ndarray,
-            y: np.ndarray) -> "SVR":
-        self._fit_svm(x, y)
-        return self
-
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        return SVMMixin.predict(self, x)
 
 
 __all__ = ["SVR"]

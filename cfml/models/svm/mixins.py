@@ -75,6 +75,12 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
         self._b = np.zeros([1, 1], np.float32)
         self._gradient_descent(self._x_normalized, self._y_normalized)
 
+    def fit(self,
+            x: np.ndarray,
+            y: np.ndarray) -> "SVMMixin":
+        self._fit_svm(x, y)
+        return self
+
     def _predict_normalized(self,
                             x_normalized: np.ndarray) -> np.ndarray:
         if self._alpha is None:
