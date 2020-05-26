@@ -27,8 +27,8 @@ class dataset(NamedTuple):
 
     @classmethod
     def from_bunch(cls, dtype: str, bunch: Bunch) -> "dataset":
-        x = bunch.data
-        y = bunch.target.reshape([-1, 1])
+        x = bunch.data.astype(np.float32)
+        y = bunch.target.reshape([-1, 1]).astype(np.int if dtype == "clf" else np.float32)
         label_names = bunch.target_names
         feature_names = bunch.feature_names
         return dataset(x, y, dtype, "label", label_names, feature_names)
