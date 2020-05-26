@@ -66,6 +66,28 @@ class Loss:
         diff = self._caches["diff"]
         return np.sign(diff)
 
+    def mse(self,
+            output: np.ndarray,
+            target: np.ndarray):
+        diff = output - target
+        self._caches["diff"] = diff
+        return np.linalg.norm(diff).mean().item()
+
+    def mse_backward(self) -> np.ndarray:
+        diff = self._caches["diff"]
+        return 2 * diff
+
+    # Here, we assume that softmax is always applied when cross_entropy is used
+
+    def cross_entropy(self,
+                      output: np.ndarray,
+                      target: np.ndarray) -> float:
+        output = Activations.softmax(output)
+        return self.mse(output, target)
+
+    def cross_entropy_backward(self) -> np.ndarray:
+        return self.mse_backward()
+
 
 class Initializer:
     def __init__(self,
