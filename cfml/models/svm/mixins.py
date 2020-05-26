@@ -17,10 +17,11 @@ class SVMMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
 
     @property
     def kernel(self):
-        kernel = getattr(self, "_kernel", None)
+        key = "_kernel"
+        kernel = getattr(self, key, None)
         if kernel is None:
             kernel = Kernel()
-            setattr(self, "_kernel", kernel)
+            setattr(self, key, kernel)
         return kernel
 
     def parameter_names(self) -> List[str]:
