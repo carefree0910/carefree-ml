@@ -9,7 +9,6 @@ from ..bases import Optimizer, GradientDescentMixin
 class RMSProp(Optimizer):
     def __init__(self, lr, **kwargs):
         super().__init__(lr)
-        self._caches = {}
         self._eps = kwargs.get("eps", 1e-8)
         self._rate = kwargs.get("decay_rate", 0.9)
 

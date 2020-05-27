@@ -9,7 +9,6 @@ from ..bases import Optimizer, GradientDescentMixin
 class SGD(Optimizer):
     def __init__(self, lr, **kwargs):
         super().__init__(lr)
-        self._caches = {}
         self._momentum = kwargs.get("momentum", 0.)
         self._nesterov = kwargs.get("nesterov", False)
 

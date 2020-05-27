@@ -9,7 +9,6 @@ from ..bases import Optimizer, GradientDescentMixin
 class Adam(Optimizer):
     def __init__(self, lr, **kwargs):
         super().__init__(lr)
-        self._caches = {}
         self._eps = kwargs.get("eps", 1e-8)
         self._beta1 = kwargs.get("beta1", 0.9)
         self._beta2 = kwargs.get("beta2", 0.999)

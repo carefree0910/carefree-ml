@@ -14,12 +14,16 @@ optimizer_dict: Dict[str, Type["Optimizer"]] = {}
 class Optimizer(ABC):
     def __init__(self, lr, **kwargs):
         self._lr = lr
+        self._caches = {}
 
     @abstractmethod
     def step(self,
              model: "GradientDescentMixin",
              gradient_dict: Dict[str, np.ndarray]):
         pass
+
+    def reset(self):
+        self._caches.clear()
 
     def apply(self, key, gradient, model):
         attr = getattr(model, key)
@@ -130,6 +134,7 @@ class GradientDescentMixin(ABC):
                           x: np.ndarray,
                           y: np.ndarray):
         self._setup_optimizer(**self.optimizer_config)
+        self._optimizer.reset()
         n_sample = len(x)
         b_size = min(n_sample, self.batch_size)
         n_step = n_sample // b_size
