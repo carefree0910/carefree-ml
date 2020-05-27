@@ -537,6 +537,26 @@ class Activations:
         return forward * (1. - forward)
 
 
+class Visualizer:
+    @staticmethod
+    def visualize1d(method: Callable,
+                    x: np.ndarray,
+                    y: np.ndarray = None,
+                    *,
+                    num_samples: int = 100,
+                    expand_ratio: float = 0.25):
+        if x.shape[1] != 1:
+            raise ValueError("visualize1d only supports 1-dimensional features")
+        plt.figure()
+        if y is not None:
+            plt.scatter(x, y, c="g", s=20)
+        x_min, x_max = x.min(), x.max()
+        expand = expand_ratio * (x_max - x_min)
+        x0 = np.linspace(x_min - expand, x_max + expand, num_samples).reshape([-1, 1])
+        plt.plot(x0, method(x0).ravel())
+        plt.show()
+
+
 class Incrementer:
     """
     Util class which can calculate running mean & running std efficiently
@@ -742,6 +762,6 @@ __all__ = [
     "get_indices_from_another", "get_unique_indices", "get_one_hot", "hash_code", "prefix_dict",
     "check_params", "timestamp", "fix_float_to_length", "truncate_string_to_length", "grouped",
     "is_numeric", "show_or_save", "update_dict", "Metrics", "Estimator", "Comparer", "Activations",
-    "Incrementer", "ScalarEMA", "context_error_handler", "timeit", "general_batch_manager",
-     "prod", "shallow_copy_dict", "register_core"
+    "Visualizer", "Incrementer", "ScalarEMA", "context_error_handler", "timeit",
+    "general_batch_manager", "prod", "shallow_copy_dict", "register_core"
 ]

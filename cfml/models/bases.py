@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from typing import *
 from abc import ABC, ABCMeta, abstractmethod
 
-from ..misc.toolkit import register_core
+from ..misc.toolkit import register_core, Visualizer
 
 model_dict: Dict[str, Type["Base"]] = {}
 
@@ -118,19 +118,8 @@ class RegressorBase(Base, metaclass=ABCMeta):
     def visualize1d(self,
                     x: np.ndarray,
                     y: np.ndarray = None,
-                    *,
-                    num_samples: int = 100,
-                    expand_ratio: float = 0.25) -> "RegressorBase":
-        if x.shape[1] != 1:
-            raise ValueError("visualize1d only supports 1-dimensional features")
-        plt.figure()
-        if y is not None:
-            plt.scatter(x, y, c="g", s=20)
-        x_min, x_max = x.min(), x.max()
-        expand = expand_ratio * (x_max - x_min)
-        x0 = np.linspace(x_min - expand, x_max + expand, num_samples).reshape([-1, 1])
-        plt.plot(x0, self.predict(x0).ravel())
-        plt.show()
+                    **kwargs) -> "RegressorBase":
+        Visualizer.visualize1d(self.predict, x, y, **kwargs)
         return self
 
 
