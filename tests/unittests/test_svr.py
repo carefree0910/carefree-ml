@@ -27,7 +27,6 @@ sk_l_svr = LinearSVR(max_iter=10000)
 with timeit("sklearn_l_svr", precision=8):
     sk_l_svr.fit(boston.x, boston.y.ravel())
 
-print(f"cfml_svr       mse : {Metrics.mse(boston.y, svr.predict(boston.x)):6.4f}")
-print(f"cfml_l_svr     mse : {Metrics.mse(boston.y, l_svr.predict(boston.x)):6.4f}")
-print(f"sklearn_svr    mse : {Metrics.mse(boston.y, sk_svr.predict(boston.x)):6.4f}")
-print(f"sklearn_l_svr  mse : {Metrics.mse(boston.y, sk_l_svr.predict(boston.x)):6.4f}")
+cfml_models = {"cfml_svr": svr, "cfml_l_svr": l_svr}
+sklearn_models = {"sklearn_svr": sk_svr, "sklearn_l_svr": sk_l_svr}
+Comparer(cfml_models, sklearn_models, dtype="reg").compare(*boston.xy)

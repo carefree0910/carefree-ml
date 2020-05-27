@@ -31,11 +31,6 @@ sk_svc = SVC()
 with timeit("sklearn_svc", precision=8):
     sk_svc.fit(breast_cancer.x, breast_cancer.y.ravel())
 
-print(f"cfml_svc       auc : {Metrics.auc(breast_cancer.y, svc.predict_prob(breast_cancer.x)):6.4f}")
-print(f"cfml_l_svc     auc : {Metrics.auc(breast_cancer.y, l_svc.predict_prob(breast_cancer.x)):6.4f}")
-print(f"sklearn_lr     auc : {Metrics.auc(breast_cancer.y, sk_lr.predict_proba(breast_cancer.x)):6.4f}")
-print(f"cfml_svc       acc : {Metrics.acc(breast_cancer.y, svc.predict(breast_cancer.x)):6.4f}")
-print(f"cfml_l_svc     acc : {Metrics.acc(breast_cancer.y, l_svc.predict(breast_cancer.x)):6.4f}")
-print(f"sklearn_lr     acc : {Metrics.acc(breast_cancer.y, sk_lr.predict(breast_cancer.x)):6.4f}")
-print(f"sklearn_l_svc  acc : {Metrics.acc(breast_cancer.y, sk_l_svc.predict(breast_cancer.x)):6.4f}")
-print(f"sklearn_svc    acc : {Metrics.acc(breast_cancer.y, sk_svc.predict(breast_cancer.x)):6.4f}")
+cfml_models = {"cfml_svc": svc, "cfml_l_svc": l_svc}
+sklearn_models = {"sklearn_lr": sk_lr, "sklearn_svc": sk_svc, "sklearn_l_svc": sk_l_svc}
+Comparer(cfml_models, sklearn_models).compare(*breast_cancer.xy)

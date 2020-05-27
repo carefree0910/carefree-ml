@@ -18,5 +18,4 @@ sk_reg = MLPRegressor()
 with timeit("sklearn", precision=8):
     sk_reg.fit(boston.x, boston.y.ravel())
 
-print(f"cfml     mse : {Metrics.mse(boston.y, fcnn.predict(boston.x)):6.4f}")
-print(f"sklearn  mse : {Metrics.mse(boston.y, sk_reg.predict(boston.x)):6.4f}")
+Comparer({"cfml": fcnn}, {"sklearn": sk_reg}, dtype="reg").compare(*boston.xy)
