@@ -3,7 +3,4 @@ from .misc.data import Data
 from .misc.toolkit import *
 
 
-__all__ = [
-    "Base", "Data",
-    "timeit", "Metrics", "Comparer", "Visualizer"
-]
+__all__ = ["Base", "Data", "timeit", "Metrics", "Experiment"]

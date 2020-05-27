@@ -1,8 +1,7 @@
-import numpy as np
-
-from sklearn.naive_bayes import GaussianNB
-
 from cfml import *
+
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
 
 
 # basic usage
@@ -18,13 +17,9 @@ breast_cancer = Data.breast_cancer()
 # comparison
 
 nb = Base.make("gaussian_nb")
-with timeit("cfml", precision=8):
-    nb.fit(breast_cancer.x, breast_cancer.y)
 sk_clf = GaussianNB()
-with timeit("sklearn", precision=8):
-    sk_clf.fit(breast_cancer.x, breast_cancer.y.ravel())
+Experiment({"cfml": nb}, {"sklearn": sk_clf}).run(breast_cancer)
 
-Comparer({"cfml": nb}, {"sklearn": sk_clf}).compare(*breast_cancer.xy)
 print(f"identical class_prior      : {np.allclose(sk_clf.class_prior_, nb.class_prior)}")
 print(f"identical mean             : {np.allclose(sk_clf.theta_, nb.mean)}")
 print(f"identical variance         : {np.allclose(sk_clf.sigma_, nb.variance)}")

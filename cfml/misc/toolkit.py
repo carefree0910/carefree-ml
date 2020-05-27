@@ -627,6 +627,54 @@ class Visualizer:
         return canvas
 
 
+class Experiment:
+    def __init__(self,
+                 cfml_models: Dict[str, Any],
+                 sklearn_models: Dict[str, Any],
+                 *,
+                 dtype: str = "clf",
+                 show_images: bool = False):
+        self._show_images = show_images
+        self._cfml_models = cfml_models
+        self._sklearn_models = sklearn_models
+        self._comparer = Comparer(cfml_models, sklearn_models, dtype=dtype)
+
+    @staticmethod
+    def suppress_warnings():
+        def warn(*args, **kwargs):
+            pass
+        import warnings
+        warnings.warn = warn
+
+    def run(self, tr_set, te_set=None):
+        if te_set is None:
+            te_set = tr_set
+        v2d_condition = tr_set.dtype == "clf" and tr_set.num_features == 2
+        v1d_condition = tr_set.dtype == "reg" and tr_set.num_features == 1
+        for model_name, model in self._cfml_models.items():
+            model.show_tqdm = False
+            with timeit(model_name, precision=8):
+                model.fit(*tr_set.xy)
+            if self._show_images:
+                if v2d_condition:
+                    model.visualize2d(*te_set.xy)
+                elif v1d_condition:
+                    model.visualize1d(*te_set.xy)
+                else:
+                    plot = getattr(model, "plot_loss_curve", None)
+                    if plot is not None:
+                        plot()
+        for model_name, model in self._sklearn_models.items():
+            with timeit(model_name, precision=8):
+                model.fit(tr_set.x, tr_set.y.ravel())
+            if self._show_images:
+                if v2d_condition:
+                    Visualizer.visualize2d(model.predict, *te_set.xy)
+                elif v1d_condition:
+                    Visualizer.visualize1d(model.predict, *te_set.xy)
+        self._comparer.compare(*te_set.xy)
+
+
 class Incrementer:
     """
     Util class which can calculate running mean & running std efficiently
@@ -832,6 +880,6 @@ __all__ = [
     "get_indices_from_another", "get_unique_indices", "get_one_hot", "hash_code", "prefix_dict",
     "check_params", "timestamp", "fix_float_to_length", "truncate_string_to_length", "grouped",
     "is_numeric", "show_or_save", "update_dict", "Metrics", "Estimator", "Comparer", "Activations",
-    "Visualizer", "Incrementer", "ScalarEMA", "context_error_handler", "timeit",
+    "Visualizer", "Experiment", "Incrementer", "ScalarEMA", "context_error_handler", "timeit",
     "general_batch_manager", "prod", "shallow_copy_dict", "register_core"
 ]

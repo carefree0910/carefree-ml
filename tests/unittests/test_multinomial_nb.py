@@ -1,8 +1,7 @@
-import numpy as np
-
-from sklearn.naive_bayes import MultinomialNB
-
 from cfml import *
+
+import numpy as np
+from sklearn.naive_bayes import MultinomialNB
 
 
 # basic usage
@@ -18,13 +17,9 @@ digits = Data.digits().to_one_hot()
 # comparison
 
 nb = Base.make("multinomial_nb")
-with timeit("cfml", precision=8):
-    nb.fit(digits.x, digits.y)
 sk_clf = MultinomialNB()
-with timeit("sklearn", precision=8):
-    sk_clf.fit(digits.x, digits.y.ravel())
 
-Comparer({"cfml": nb}, {"sklearn": sk_clf}).compare(*digits.xy)
+Experiment({"cfml": nb}, {"sklearn": sk_clf}).run(digits)
 print(f"identical class_log_prior  : {np.allclose(sk_clf.class_log_prior_, nb.class_log_prior)}")
 print(f"identical feature_log_prob : {np.allclose(sk_clf.feature_log_prob_, nb.feature_log_prob)}")
 cfml_prob = nb.predict_prob(digits.x)
