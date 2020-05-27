@@ -4,18 +4,7 @@ import numpy as np
 from sklearn.naive_bayes import MultinomialNB
 
 
-# basic usage
-
 digits = Data.digits().to_one_hot()
-(
-    Base
-        .make("multinomial_nb")
-        .fit(digits.x, digits.y)
-)
-
-
-# comparison
-
 nb = Base.make("multinomial_nb")
 sk_clf = MultinomialNB()
 

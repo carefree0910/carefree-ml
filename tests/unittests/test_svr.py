@@ -4,15 +4,7 @@ Experiment.suppress_warnings()
 from sklearn.svm import SVR, LinearSVR
 
 
-# basic usage
-
 boston = Data.boston()
-Base.make("svr").fit(boston.x, boston.y).plot_loss_curve()
-Base.make("linear_svr").fit(boston.x, boston.y).plot_loss_curve()
-
-
-# comparison
-
 svr = Base.make("svr")
 l_svr = Base.make("linear_svr")
 sk_svr = SVR()

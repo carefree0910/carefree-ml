@@ -4,18 +4,7 @@ import numpy as np
 from sklearn.naive_bayes import GaussianNB
 
 
-# basic usage
-
 breast_cancer = Data.breast_cancer()
-(
-    Base
-        .make("gaussian_nb")
-        .fit(breast_cancer.x, breast_cancer.y)
-)
-
-
-# comparison
-
 nb = Base.make("gaussian_nb")
 sk_clf = GaussianNB()
 Experiment({"cfml": nb}, {"sklearn": sk_clf}).run(breast_cancer)
