@@ -741,7 +741,7 @@ class general_batch_manager(context_error_handler):
 __all__ = [
     "get_indices_from_another", "get_unique_indices", "get_one_hot", "hash_code", "prefix_dict",
     "check_params", "timestamp", "fix_float_to_length", "truncate_string_to_length", "grouped",
-    "is_numeric", "show_or_save", "update_dict", "Incrementer", "ScalarEMA",
-    "context_error_handler", "timeit", "general_batch_manager",
+    "is_numeric", "show_or_save", "update_dict", "Metrics", "Estimator", "Comparer", "Activations",
+    "Incrementer", "ScalarEMA", "context_error_handler", "timeit", "general_batch_manager",
      "prod", "shallow_copy_dict", "register_core"
 ]
