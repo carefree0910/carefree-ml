@@ -245,7 +245,7 @@ class Data:
         w_list = [np.random.randn(n_valid, 1) for _ in range(p)]
         o_train = [x[..., idx].dot(w) for x, idx, w in zip(x_train_list, idx_list, w_list)]
         o_test = [x[..., idx].dot(w) for x, idx, w in zip(x_test_list, idx_list, w_list)]
-        affine_train, affine_test = map(partial(np.sum, axis=0), o_train, o_test)
+        affine_train, affine_test = map(partial(np.sum, axis=0), [o_train, o_test])
         if dtype == "reg":
             y_train, y_test = affine_train, affine_test
         else:
