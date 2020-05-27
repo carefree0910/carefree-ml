@@ -28,7 +28,7 @@ class StrMixin:
 
 class NormalizeMixin(ABC):
     @property
-    def eps(self):
+    def std_eps(self):
         return 1e-8
 
     @property
@@ -48,11 +48,11 @@ class NormalizeMixin(ABC):
 
     def normalize_x(self,
                     x: np.ndarray) -> np.ndarray:
-        return (x - self._x_mean) / (self._x_std + self.eps)
+        return (x - self._x_mean) / (self._x_std + self.std_eps)
 
     def normalize_y(self,
                     y: np.ndarray) -> np.ndarray:
-        return (y - self._y_mean) / (self._y_std + self.eps)
+        return (y - self._y_mean) / (self._y_std + self.std_eps)
 
     def recover_y(self,
                   y_normalized: np.ndarray,
