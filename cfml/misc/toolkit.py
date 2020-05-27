@@ -452,11 +452,16 @@ class Estimator:
             name: None if method is None else self._metric.score(y, method(x))
             for name, method in methods.items()
         }
+        msg_list = []
         for name in sorted(scores):
             score = scores[name]
             if score is None:
                 continue
-            print(f"{name:>20s}  |  {self._metric.type:^8s}  |  {score:8.6f}")
+            msg_list.append(f"|  {name:>20s}  |  {self._metric.type:^8s}  |  {score:8.6f}  |")
+        width = max(map(len, msg_list))
+        msg_list.insert(0, "=" * width)
+        msg_list.append("-" * width)
+        print("\n".join(msg_list))
 
 
 class Comparer:
