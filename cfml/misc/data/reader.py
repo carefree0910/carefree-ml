@@ -25,10 +25,15 @@ class dataset(NamedTuple):
     def is_reg(self):
         return self.dtype == "reg"
 
+    @staticmethod
+    def to_dtype(dtype: str, x: np.ndarray, y: np.ndarray):
+        x = x.astype(np.float32)
+        y = y.reshape([-1, 1]).astype(np.int if dtype == "clf" else np.float32)
+        return x, y
+
     @classmethod
     def from_bunch(cls, dtype: str, bunch: Bunch) -> "dataset":
-        x = bunch.data.astype(np.float32)
-        y = bunch.target.reshape([-1, 1]).astype(np.int if dtype == "clf" else np.float32)
+        x, y = cls.to_dtype(dtype, bunch.data, bunch.target)
         label_names = bunch.get("target_names")
         feature_names = bunch.get("feature_names")
         return dataset(x, y, dtype, "label", label_names, feature_names)
