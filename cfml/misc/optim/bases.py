@@ -57,6 +57,14 @@ class GradientDescentMixin(ABC):
     def optimizer_config(self):
         return getattr(self, "_optimizer_config", {})
 
+    @property
+    def show_tqdm(self):
+        return getattr(self, "_show_tqdm", True)
+
+    @show_tqdm.setter
+    def show_tqdm(self, value: bool):
+        self._show_tqdm = value
+
     @abstractmethod
     def parameter_names(self) -> List[str]:
         """ this method returns all parameters' names, each name should correspond to a property
@@ -139,7 +147,9 @@ class GradientDescentMixin(ABC):
         b_size = min(n_sample, self.batch_size)
         n_step = n_sample // b_size
         n_step += int(n_step * b_size < n_sample)
-        iterator = tqdm(range(self.epoch), total=self.epoch)
+        iterator = range(self.epoch)
+        if self.show_tqdm:
+            iterator = tqdm(iterator, total=self.epoch)
         self._losses = []
         for _ in iterator:
             local_losses = []
@@ -151,7 +161,8 @@ class GradientDescentMixin(ABC):
                 gradient_dict = self.gradient_function(x_batch, y_batch, batch_indices, loss_dict)
                 self._optimizer.step(self, gradient_dict)
                 local_losses.append(loss_dict["loss"])
-            iterator.set_postfix({"loss": fix_float_to_length(local_losses[0], 6)})
+            if self.show_tqdm:
+                iterator.set_postfix({"loss": fix_float_to_length(local_losses[0], 6)})
             self._losses.append(local_losses)
 
     def plot_loss_curve(self) -> "GradientDescentMixin":
