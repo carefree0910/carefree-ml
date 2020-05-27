@@ -453,11 +453,16 @@ class Estimator:
             for name, method in methods.items()
         }
         msg_list = []
-        for name in sorted(scores):
+        best_idx, best_score = -1, -math.inf
+        for i, name in enumerate(sorted(scores)):
             score = scores[name]
             if score is None:
                 continue
             msg_list.append(f"|  {name:>20s}  |  {self._metric.type:^8s}  |  {score:8.6f}  |")
+            new_score = score * self._metric.sign
+            if new_score > best_score:
+                best_idx, best_score = i, new_score
+        msg_list[best_idx] += "  <-  "
         width = max(map(len, msg_list))
         msg_list.insert(0, "=" * width)
         msg_list.append("-" * width)
