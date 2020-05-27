@@ -32,30 +32,6 @@ class NormalizeMixin(ABC):
         return 1e-8
 
     @property
-    def x_mean(self):
-        return getattr(self, "_x_mean", None)
-
-    @property
-    def x_std(self):
-        return getattr(self, "_x_std", None)
-
-    @property
-    def y_mean(self):
-        return getattr(self, "_y_mean", None)
-
-    @property
-    def y_std(self):
-        return getattr(self, "_y_std", None)
-
-    @property
-    def x_normalized(self):
-        return getattr(self, "_x_normalized", None)
-
-    @property
-    def y_normalized(self):
-        return getattr(self, "_y_normalized", None)
-
-    @property
     def normalize_labels(self):
         return getattr(self, "_normalize_labels", False)
 
