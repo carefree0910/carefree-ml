@@ -204,6 +204,15 @@ class Data:
         return dataset.from_xy("clf", xs, labels)
 
     @staticmethod
+    def _fetch_ys(dtype, affine_train, affine_test):
+        if dtype == "reg":
+            y_train, y_test = affine_train, affine_test
+        else:
+            y_train = (affine_train > 0).astype(np.int)
+            y_test = (affine_test > 0).astype(np.int)
+        return y_train, y_test
+
+    @staticmethod
     def noisy_linear(*,
                      dtype: str = "reg",
                      size: int = 10000,
@@ -218,12 +227,11 @@ class Data:
         w = np.random.randn(n_valid, 1)
         affine_train = x_train[..., idx].dot(w)
         affine_test = x_test[..., idx].dot(w)
-        if dtype == "reg":
-            y_train, y_test = affine_train, affine_test
-        else:
-            y_train = (affine_train > 0).astype(np.int)
-            y_test = (affine_test > 0).astype(np.int)
-        tr_set, te_set = map(dataset.from_xy, 2 *[dtype], [x_train_noise, x_test], [y_train, y_test])
+        tr_set, te_set = map(
+            dataset.from_xy,
+            2 * [dtype], [x_train_noise, x_test],
+            Data._fetch_ys(dtype, affine_train, affine_test)
+        )
         return tr_set, te_set
 
     @staticmethod
@@ -246,12 +254,11 @@ class Data:
         o_train = [x[..., idx].dot(w) for x, idx, w in zip(x_train_list, idx_list, w_list)]
         o_test = [x[..., idx].dot(w) for x, idx, w in zip(x_test_list, idx_list, w_list)]
         affine_train, affine_test = map(partial(np.sum, axis=0), [o_train, o_test])
-        if dtype == "reg":
-            y_train, y_test = affine_train, affine_test
-        else:
-            y_train = (affine_train > 0).astype(np.int)
-            y_test = (affine_test > 0).astype(np.int)
-        tr_set, te_set = map(dataset.from_xy, 2 * [dtype], [x_train_noise, x_test], [y_train, y_test])
+        tr_set, te_set = map(
+            dataset.from_xy,
+            2 * [dtype], [x_train_noise, x_test],
+            Data._fetch_ys(dtype, affine_train, affine_test)
+        )
         return tr_set, te_set
 
 
