@@ -20,6 +20,10 @@ class dataset(NamedTuple):
     feature_names: Union[None, List[str]]
 
     @property
+    def xy(self):
+        return self.x, self.y
+
+    @property
     def is_clf(self):
         return self.dtype == "clf"
 
