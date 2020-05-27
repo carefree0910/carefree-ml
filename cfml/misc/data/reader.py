@@ -217,14 +217,14 @@ class Data:
         return tr_set, te_set
 
     @staticmethod
-    def gen_noisy_poly(*,
-                       dtype: str = "reg",
-                       p: int = 3,
-                       size: int = 10000,
-                       n_dim: int = 100,
-                       n_valid: int = 5,
-                       noise_scale: float = 0.5,
-                       test_ratio: float = 0.15) -> Tuple[dataset, dataset]:
+    def noisy_poly(*,
+                   dtype: str = "reg",
+                   p: int = 3,
+                   size: int = 10000,
+                   n_dim: int = 100,
+                   n_valid: int = 5,
+                   noise_scale: float = 0.5,
+                   test_ratio: float = 0.15) -> Tuple[dataset, dataset]:
         assert p > 1, "p should be greater than 1"
         x_train = np.random.randn(size, n_dim)
         x_train_list = [x_train] + [x_train ** i for i in range(2, p + 1)]
