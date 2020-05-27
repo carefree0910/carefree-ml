@@ -1,3 +1,4 @@
+import io
 import dill
 import math
 import time
@@ -10,6 +11,7 @@ import numpy as np
 import scipy.stats as ss
 import matplotlib.pyplot as plt
 
+from PIL import Image
 from scipy import interp
 from sklearn import metrics
 from functools import reduce, partial
@@ -555,6 +557,74 @@ class Visualizer:
         x0 = np.linspace(x_min - expand, x_max + expand, num_samples).reshape([-1, 1])
         plt.plot(x0, method(x0).ravel())
         plt.show()
+
+    @staticmethod
+    def visualize2d(method,
+                    x: np.ndarray,
+                    y: np.ndarray = None,
+                    *,
+                    title: str = None,
+                    dense: int = 200,
+                    padding: float = 0.1,
+                    return_canvas: bool = False,
+                    draw_background: bool = True,
+                    extra_scatters: np.ndarray = None,
+                    emphasize_indices: np.ndarray = None) -> Union[None, np.ndarray]:
+        axis = x.T
+        if axis.shape[0] != 2:
+            raise ValueError("visualize2d only supports 2-dimensional features")
+        nx, ny, padding = dense, dense, padding
+        x_min, x_max = np.min(axis[0]), np.max(axis[0])  # type: float
+        y_min, y_max = np.min(axis[1]), np.max(axis[1])  # type: float
+        x_padding = max(abs(x_min), abs(x_max)) * padding
+        y_padding = max(abs(y_min), abs(y_max)) * padding
+        x_min -= x_padding
+        x_max += x_padding
+        y_min -= y_padding
+        y_max += y_padding
+
+        def get_base(_nx, _ny):
+            _xf = np.linspace(x_min, x_max, _nx)
+            _yf = np.linspace(y_min, y_max, _ny)
+            n_xf, n_yf = np.meshgrid(_xf, _yf)
+            return _xf, _yf, np.c_[n_xf.ravel(), n_yf.ravel()]
+
+        xf, yf, base_matrix = get_base(nx, ny)
+        z = method(base_matrix).reshape((nx, ny))
+
+        labels = y.ravel()
+        num_labels = y.max().item() + 1
+        colors = plt.cm.rainbow([i / num_labels for i in range(num_labels)])[labels]
+
+        plt.figure()
+        plt.title(title)
+        if draw_background:
+            xy_xf, xy_yf = np.meshgrid(xf, yf, sparse=True)
+            plt.pcolormesh(xy_xf, xy_yf, z, cmap=plt.cm.Pastel1)
+        else:
+            plt.contour(xf, yf, z, c='k-', levels=[0])
+        plt.scatter(axis[0], axis[1], c=colors)
+
+        if emphasize_indices is not None:
+            indices = np.array([False] * len(axis[0]))
+            indices[np.asarray(emphasize_indices)] = True
+            plt.scatter(axis[0][indices], axis[1][indices], s=80,
+                        facecolors="None", zorder=10)
+        if extra_scatters is not None:
+            plt.scatter(*np.asarray(extra_scatters).T, s=80, zorder=25, facecolors="red")
+
+        if not return_canvas:
+            plt.show()
+            return
+
+        buffer_ = io.BytesIO()
+        plt.savefig(buffer_, format="png")
+        plt.close()
+        buffer_.seek(0)
+        image = Image.open(buffer_)
+        canvas = np.asarray(image)[..., :3]
+        buffer_.close()
+        return canvas
 
 
 class Incrementer:

@@ -96,6 +96,12 @@ class ClassifierBase(Base, metaclass=ABCMeta):
 
         """
 
+    def visualize2d(self,
+                    x: np.ndarray,
+                    y: np.ndarray = None,
+                    **kwargs) -> Union[None, np.ndarray]:
+        return Visualizer.visualize2d(self.predict, x, y, **kwargs)
+
 
 class RegressorBase(Base, metaclass=ABCMeta):
     @abstractmethod
