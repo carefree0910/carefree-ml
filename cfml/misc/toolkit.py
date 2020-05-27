@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn import metrics
 from functools import reduce
-from typing import Iterable, List, Dict
+from typing import *
 
 dill._dill._reverse_typemap["ClassType"] = type
 
@@ -436,6 +436,25 @@ class Metrics:
             raise NotImplementedError(f"transformation from fpr, tpr -> '{metric_type}' is not implemented")
         metric *= Metrics.sign_dict[metric_type]
         return thresholds[np.argmax(metric)]
+
+
+class Estimator:
+    def __init__(self, metric: str, **kwargs):
+        self._metric = Metrics(metric, **kwargs)
+
+    def estimate(self,
+                 x: np.ndarray,
+                 y: np.ndarray,
+                 methods: Dict[str, Union[None, Callable]]):
+        scores = {
+            name: None if method is None else self._metric.score(y, method(x))
+            for name, method in methods.items()
+        }
+        for name in sorted(scores):
+            score = scores[name]
+            if score is None:
+                continue
+            print(f"{name:>20s}  |  {self._metric.type:^8s}  |  {score:8.6f}")
 
 
 class Activations:
