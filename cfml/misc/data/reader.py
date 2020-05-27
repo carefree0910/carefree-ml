@@ -31,6 +31,16 @@ class dataset(NamedTuple):
     def is_reg(self):
         return self.dtype == "reg"
 
+    @property
+    def num_features(self) -> int:
+        return self.x.shape[1]
+
+    @property
+    def num_classes(self) -> int:
+        if self.dtype == "reg":
+            return 0
+        return self.y.max().item() + 1
+
     @staticmethod
     def to_dtype(dtype: str, x: np.ndarray, y: np.ndarray):
         x = x.astype(np.float32)
