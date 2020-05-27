@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from scipy import interp
 from sklearn import metrics
-from functools import reduce
+from functools import reduce, partial
 from typing import *
 
 dill._dill._reverse_typemap["ClassType"] = type
@@ -455,6 +455,44 @@ class Estimator:
             if score is None:
                 continue
             print(f"{name:>20s}  |  {self._metric.type:^8s}  |  {score:8.6f}")
+
+
+class Comparer:
+    def __init__(self,
+                 cfml_models: Dict[str, Any],
+                 sklearn_models: Dict[str, Any],
+                 *,
+                 dtype: str = "clf"):
+        self._dtype = dtype
+        sklearn_predict = lambda arr, sklearn_model: sklearn_model.predict(arr).reshape([-1, 1])
+        predict_methods = {k: v.predict for k, v in cfml_models.items()}
+        predict_methods.update({
+                k: partial(sklearn_predict, sklearn_model=v)
+                for k, v in sklearn_models.items()
+            })
+        if dtype == "reg":
+            self._l1_estimator = Estimator("mae")
+            self._mse_estimator = Estimator("mse")
+            self._methods = predict_methods
+        else:
+            self._auc_estimator = Estimator("auc")
+            self._acc_estimator = Estimator("acc")
+            self._acc_methods = predict_methods
+            self._auc_methods = {k: v.predict_prob for k, v in cfml_models.items()}
+            self._auc_methods.update({
+                k: getattr(v, "predict_proba", None)
+                for k, v in sklearn_models.items()
+            })
+
+    def compare(self,
+                x: np.ndarray,
+                y: np.ndarray):
+        if self._dtype == "reg":
+            self._l1_estimator.estimate(x, y, self._methods)
+            self._mse_estimator.estimate(x, y, self._methods)
+        else:
+            self._auc_estimator.estimate(x, y, self._auc_methods)
+            self._acc_estimator.estimate(x, y, self._acc_methods)
 
 
 class Activations:
