@@ -14,6 +14,10 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
         return getattr(self, "_lb", 0.)
 
     @property
+    def loss(self):
+        return getattr(self, "_loss", "mse")
+
+    @property
     def fit_intersect(self):
         return getattr(self, "_fit_intersect", True)
 
@@ -29,7 +33,8 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
                       batch_indices: np.ndarray) -> Dict[str, Any]:
         predictions = self._predict_normalized(x_batch)
         diff = predictions - y_batch
-        return {"diff": diff, "loss": np.linalg.norm(diff).item()}
+        loss = np.abs(diff).mean() if self.loss == "l1" else np.linalg.norm(diff)
+        return {"diff": diff, "loss": loss.item()}
 
     def gradient_function(self,
                           x_batch: np.ndarray,
@@ -37,7 +42,8 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
                           batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         diff = loss_dict["diff"]
-        gradient_dict = {"_w": (diff * x_batch).mean(0).reshape([-1, 1])}
+        coeff = np.sign(diff)  if self.loss == "l1" else diff
+        gradient_dict = {"_w": (coeff * x_batch).mean(0).reshape([-1, 1])}
         if self.lb > 0.:
             gradient_dict["_w"] += self.lb * self._w
         if self.fit_intersect:
