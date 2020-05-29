@@ -7,7 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 breast_cancer = Data.breast_cancer()
 nb = Base.make("gaussian_nb")
 sk_clf = GaussianNB()
-Experiment({"cfml": nb}, {"sklearn": sk_clf}).run(breast_cancer)
+Experiment({"cfml_gnb": nb}, {"sklearn_gnb": sk_clf}).run(breast_cancer)
 
 print(f"identical class_prior      : {np.allclose(sk_clf.class_prior_, nb.class_prior)}")
 print(f"identical mean             : {np.allclose(sk_clf.theta_, nb.mean)}")
