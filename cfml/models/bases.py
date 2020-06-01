@@ -5,7 +5,8 @@ from abc import ABC, ABCMeta, abstractmethod
 
 from ..misc.toolkit import register_core, Visualizer
 
-model_dict: Dict[str, Type["Base"]] = {}
+base_type = Union["ClassifierBase", "RegressorBase"]
+model_dict: Dict[str, Type[base_type]] = {}
 
 
 class Base(ABC):
@@ -15,7 +16,7 @@ class Base(ABC):
     @abstractmethod
     def fit(self,
             x: np.ndarray,
-            y: np.ndarray) -> "Base":
+            y: np.ndarray) -> base_type:
         """ fit the model
 
         Parameters
@@ -47,7 +48,7 @@ class Base(ABC):
         """
 
     @staticmethod
-    def make(model: str, *args, **kwargs) -> "Base":
+    def make(model: str, *args, **kwargs) -> base_type:
         return model_dict[model](*args, **kwargs)
 
     @staticmethod
