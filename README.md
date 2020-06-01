@@ -365,6 +365,6 @@ Although I did implement `carefree-ml` in two days, it benefits from a repo I wr
 
 ## License
 
-`carefree-ml` is MIT licensed, as found in the [`LICENSE`](https://github.com/carefree0910/carefree-learn/blob/master/LICENSE) file.
+`carefree-ml` is MIT licensed, as found in the [`LICENSE`](https://github.com/carefree0910/carefree-ml/blob/master/LICENSE) file.
 
 ---
