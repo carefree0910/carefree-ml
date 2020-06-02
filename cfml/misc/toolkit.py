@@ -830,7 +830,7 @@ class timeit(context_error_handler):
 
 class general_batch_manager(context_error_handler):
     """
-    Inference in batch, it could be any general instance
+    Process data in batch
 
     Parameters
     ----------
