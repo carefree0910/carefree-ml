@@ -2,10 +2,10 @@ import numpy as np
 
 from abc import ABCMeta
 from typing import *
+from cftool.optim import GradientDescentMixin
 
 from ..bases import Base
 from ..mixins import NormalizeMixin, BinaryClassifierMixin
-from ...misc.optim import GradientDescentMixin
 
 
 class LinearMixin(NormalizeMixin, GradientDescentMixin):

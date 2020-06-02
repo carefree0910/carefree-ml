@@ -1,12 +1,12 @@
 import numpy as np
 
-from abc import ABCMeta
 from typing import *
+from abc import ABCMeta
+from cftool.optim import GradientDescentMixin
 from sklearn.preprocessing import OneHotEncoder
 
 from .modules import *
 from ..mixins import NormalizeMixin, BinaryClassifierMixin
-from ...misc.optim import GradientDescentMixin
 from ...misc.toolkit import Activations
 
 
