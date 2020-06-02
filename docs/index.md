@@ -1,10 +1,6 @@
 # carefree-ml
 
-> **我们能用两天来做什么？**
->
-> What can we do in two days? 
-
-`carefree-ml` implemented Machine Learning algorithms with numpy, mainly for educational use, **IN TWO DAYS.**
+`carefree-ml` implemented Machine Learning algorithms with numpy, mainly for educational use
 
 
 ## Installation
