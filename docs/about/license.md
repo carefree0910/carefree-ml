@@ -4,7 +4,7 @@
 
 
 
-## carefree-learn License (MIT)
+## carefree-ml License (MIT)
 
 Copyright (c) 2019 carefree0910
 
