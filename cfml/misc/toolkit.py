@@ -16,9 +16,9 @@ class Comparer:
         sklearn_predict = lambda arr, sklearn_model: sklearn_model.predict(arr).reshape([-1, 1])
         predict_methods = {k: v.predict for k, v in cfml_models.items()}
         predict_methods.update({
-                k: partial(sklearn_predict, sklearn_model=v)
-                for k, v in sklearn_models.items()
-            })
+            k: partial(sklearn_predict, sklearn_model=v)
+            for k, v in sklearn_models.items()
+        })
         if dtype == "reg":
             self._l1_estimator = Estimator("mae")
             self._mse_estimator = Estimator("mse")

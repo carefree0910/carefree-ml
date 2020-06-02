@@ -42,7 +42,7 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
                           batch_indices: np.ndarray,
                           loss_dict: Dict[str, Any]) -> Dict[str, np.ndarray]:
         diff = loss_dict["diff"]
-        coeff = np.sign(diff)  if self.loss == "l1" else diff
+        coeff = np.sign(diff) if self.loss == "l1" else diff
         gradient_dict = {"_w": (coeff * x_batch).mean(0).reshape([-1, 1])}
         if self.lb > 0.:
             gradient_dict["_w"] += self.lb * self._w
