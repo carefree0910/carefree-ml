@@ -3,9 +3,10 @@ Experiment.suppress_warnings()
 
 from sklearn.svm import LinearSVC, SVC
 from sklearn.linear_model import LogisticRegression
+from cfdata.tabular import TabularDataset
 
 
-breast_cancer = Data.breast_cancer()
+breast_cancer = TabularDataset.breast_cancer()
 svc = Base.make("svc")
 l_svc = Base.make("linear_svc")
 sk_lr = LogisticRegression(max_iter=10000)

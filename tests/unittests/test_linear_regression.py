@@ -1,13 +1,20 @@
+import os
+
 from cfml import *
 Experiment.suppress_warnings()
 
+from cfdata.tabular import *
 from sklearn.linear_model import LinearRegression
 
 
-prices = Data().read("prices.txt")
+prices_file = os.path.join(os.pardir, "datasets", "prices.txt")
+prices = TabularData().read(prices_file).to_dataset()
 lr = Base.make("linear_regression")
 poly = Base.make("poly", deg=1)
 sk_reg = LinearRegression(normalize=True)
 
-experiment = Experiment({"cfml_lr": lr, "cfml_poly": poly}, {"sklearn": sk_reg}, dtype="reg")
+experiment = Experiment(
+    {"cfml_lr": lr, "cfml_poly": poly}, {"sklearn": sk_reg},
+    task_type=TaskTypes.REGRESSION
+)
 experiment.run(prices)

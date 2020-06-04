@@ -1,11 +1,17 @@
+import os
+
+from cfdata.tabular import *
+
 from cfml import *
 
 # datasets
-boston = Data.boston()
-prices = Data().read("prices.txt")
-breast_cancer = Data.breast_cancer()
-digits = Data.digits()
-digits_onehot = digits.to_one_hot()
+boston = TabularDataset.boston()
+prices_file = os.path.join("datasets", "prices.txt")
+prices = TabularData(task_type=TaskTypes.REGRESSION).read(prices_file).to_dataset()
+breast_cancer = TabularDataset.breast_cancer()
+digits = TabularDataset.digits()
+column_indices = list(range(digits.num_features))
+digits_onehot = TabularData.from_dataset(digits, categorical_columns=column_indices).to_dataset()
 
 # numpy poly fit
 Base.make("poly").fit(*prices.xy).visualize1d(*prices.xy)

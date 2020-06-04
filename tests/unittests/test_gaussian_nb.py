@@ -1,10 +1,12 @@
 from cfml import *
 
 import numpy as np
+
+from cfdata.tabular import TabularDataset
 from sklearn.naive_bayes import GaussianNB
 
 
-breast_cancer = Data.breast_cancer()
+breast_cancer = TabularDataset.breast_cancer()
 nb = Base.make("gaussian_nb")
 sk_clf = GaussianNB()
 Experiment({"cfml_gnb": nb}, {"sklearn_gnb": sk_clf}).run(breast_cancer)

@@ -2,6 +2,8 @@ from cfml import *
 Experiment.suppress_warnings()
 
 import numpy as np
+
+from cfdata.tabular import TabularDataset
 from sklearn.neural_network import MLPClassifier
 
 np.random.seed(142857)
@@ -11,16 +13,16 @@ sk_clf = MLPClassifier()
 experiment = Experiment({"cfml": fcnn}, {"sklearn": sk_clf}, show_images=True)
 
 # xor
-experiment.run(Data.xor())
+experiment.run(TabularDataset.xor())
 
 # spiral
-experiment.run(Data.spiral())
+experiment.run(TabularDataset.spiral())
 
 # two clusters
-experiment.run(Data.two_clusters())
+experiment.run(TabularDataset.two_clusters())
 
 # simple non-linear
-experiment.run(Data.simple_non_linear())
+experiment.run(TabularDataset.simple_non_linear())
 
 # nine grid
-experiment.run(Data.nine_grid())
+experiment.run(TabularDataset.nine_grid())

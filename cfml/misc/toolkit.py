@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from cftool import *
 from typing import *
 from functools import partial
+from cfdata.tabular import TaskTypes
 
 
 class Comparer:
@@ -11,15 +12,15 @@ class Comparer:
                  cfml_models: Dict[str, Any],
                  sklearn_models: Dict[str, Any],
                  *,
-                 dtype: str = "clf"):
-        self._dtype = dtype
+                 task_type: TaskTypes = TaskTypes.CLASSIFICATION):
+        self._is_reg = task_type is TaskTypes.REGRESSION
         sklearn_predict = lambda arr, sklearn_model: sklearn_model.predict(arr).reshape([-1, 1])
         predict_methods = {k: v.predict for k, v in cfml_models.items()}
         predict_methods.update({
             k: partial(sklearn_predict, sklearn_model=v)
             for k, v in sklearn_models.items()
         })
-        if dtype == "reg":
+        if self._is_reg:
             self._l1_estimator = Estimator("mae")
             self._mse_estimator = Estimator("mse")
             self._methods = predict_methods
@@ -36,7 +37,7 @@ class Comparer:
     def compare(self,
                 x: np.ndarray,
                 y: np.ndarray):
-        if self._dtype == "reg":
+        if self._is_reg:
             self._l1_estimator.estimate(x, y, self._methods)
             self._mse_estimator.estimate(x, y, self._methods)
         else:
@@ -49,12 +50,12 @@ class Experiment:
                  cfml_models: Dict[str, Any],
                  sklearn_models: Dict[str, Any],
                  *,
-                 dtype: str = "clf",
+                 task_type: TaskTypes = TaskTypes.CLASSIFICATION,
                  show_images: bool = False):
         self._show_images = show_images
         self._cfml_models = cfml_models
         self._sklearn_models = sklearn_models
-        self._comparer = Comparer(cfml_models, sklearn_models, dtype=dtype)
+        self._comparer = Comparer(cfml_models, sklearn_models, task_type=task_type)
 
     @staticmethod
     def suppress_warnings():
@@ -66,8 +67,8 @@ class Experiment:
     def run(self, tr_set, te_set=None):
         if te_set is None:
             te_set = tr_set
-        v2d_condition = tr_set.dtype == "clf" and tr_set.num_features == 2
-        v1d_condition = tr_set.dtype == "reg" and tr_set.num_features == 1
+        v2d_condition = tr_set.is_clf and tr_set.num_features == 2
+        v1d_condition = tr_set.is_reg and tr_set.num_features == 1
         for model_name, model in self._cfml_models.items():
             model.show_tqdm = False
             with timeit(model_name, precision=8):
