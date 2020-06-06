@@ -1,48 +1,56 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from cftool import *
 from typing import *
-from functools import partial
+from cftool.ml import *
+from cftool.misc import timeit
 from cfdata.tabular import TaskTypes
 
 
-class Comparer:
+def make_cfml_pattern(cfml_model, requires_prob) -> ModelPattern:
+    predict_method = "predict_prob" if requires_prob else "predict"
+    return ModelPattern(init_method=lambda: cfml_model, predict_method=predict_method)
+
+
+def make_sklearn_pattern(sk_model, requires_prob) -> Union[ModelPattern, None]:
+    if requires_prob:
+        predict_method = getattr(sk_model, "predict_proba", None)
+        if predict_method is None:
+            return
+    else:
+        predict_method = lambda x: sk_model.predict(x).reshape([-1, 1])
+    return ModelPattern(predict_method=predict_method)
+
+
+class SklearnComparer:
     def __init__(self,
                  cfml_models: Dict[str, Any],
                  sklearn_models: Dict[str, Any],
                  *,
                  task_type: TaskTypes = TaskTypes.CLASSIFICATION):
-        self._is_reg = task_type is TaskTypes.REGRESSION
-        sklearn_predict = lambda arr, sklearn_model: sklearn_model.predict(arr).reshape([-1, 1])
-        predict_methods = {k: v.predict for k, v in cfml_models.items()}
-        predict_methods.update({
-            k: partial(sklearn_predict, sklearn_model=v)
-            for k, v in sklearn_models.items()
-        })
-        if self._is_reg:
-            self._l1_estimator = Estimator("mae")
-            self._mse_estimator = Estimator("mse")
-            self._methods = predict_methods
+        patterns = {}
+        models_bundle = [cfml_models, sklearn_models]
+        make_functions = [make_cfml_pattern, make_sklearn_pattern]
+        if task_type is TaskTypes.REGRESSION:
+            metrics = ["mae", "mse"]
+            for models, make_function in zip(models_bundle, make_functions):
+                new_patterns = {k: make_function(v, False) for k, v in models.items()}
+                patterns.update({k: v for k, v in new_patterns.items() if v is not None})
         else:
-            self._auc_estimator = Estimator("auc")
-            self._acc_estimator = Estimator("acc")
-            self._acc_methods = predict_methods
-            self._auc_methods = {k: v.predict_prob for k, v in cfml_models.items()}
-            self._auc_methods.update({
-                k: getattr(v, "predict_proba", None)
-                for k, v in sklearn_models.items()
-            })
+            metrics = ["auc", "acc"]
+            for models, make_function in zip(models_bundle, make_functions):
+                for metric in metrics:
+                    for model_name, model in models.items():
+                        local_patterns = patterns.setdefault(model_name, {})
+                        new_pattern = make_function(model, metric in Metrics.requires_prob_metrics)
+                        if new_pattern is not None:
+                            local_patterns[metric] = new_pattern
+        self._core = Comparer(patterns, list(map(Estimator, metrics)))
 
     def compare(self,
                 x: np.ndarray,
                 y: np.ndarray):
-        if self._is_reg:
-            self._l1_estimator.estimate(x, y, self._methods)
-            self._mse_estimator.estimate(x, y, self._methods)
-        else:
-            self._auc_estimator.estimate(x, y, self._auc_methods)
-            self._acc_estimator.estimate(x, y, self._acc_methods)
+        self._core.compare(x, y)
 
 
 class Experiment:
@@ -55,7 +63,7 @@ class Experiment:
         self._show_images = show_images
         self._cfml_models = cfml_models
         self._sklearn_models = sklearn_models
-        self._comparer = Comparer(cfml_models, sklearn_models, task_type=task_type)
+        self._comparer = SklearnComparer(cfml_models, sklearn_models, task_type=task_type)
 
     @staticmethod
     def suppress_warnings():
@@ -135,4 +143,4 @@ class Activations:
         return forward * (1. - forward)
 
 
-__all__ = ["Comparer", "Activations", "Experiment"]
+__all__ = ["SklearnComparer", "Experiment", "Activations"]
