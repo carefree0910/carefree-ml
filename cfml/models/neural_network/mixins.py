@@ -118,7 +118,7 @@ class FCNNMixin(NormalizeMixin, GradientDescentMixin, metaclass=ABCMeta):
                   y: np.ndarray):
         self._initialize_statistics(x, y)
         self._initialize_parameters(x.shape[1], y.shape[1])
-        self._gradient_descent(self._x_normalized, self._y_normalized)
+        self.gradient_descent(self._x_normalized, self._y_normalized)
 
     def fit(self,
             x: np.ndarray,

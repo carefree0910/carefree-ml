@@ -57,7 +57,7 @@ class LinearMixin(NormalizeMixin, GradientDescentMixin):
         self._w = np.random.random([x.shape[1], 1])
         if self.fit_intersect:
             self._b = np.random.random([1, 1])
-        self._gradient_descent(self._x_normalized, self._y_normalized)
+        self.gradient_descent(self._x_normalized, self._y_normalized)
 
     def fit(self,
             x: np.ndarray,

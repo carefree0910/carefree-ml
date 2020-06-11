@@ -7,19 +7,17 @@ from cftool.misc import timeit
 from cfdata.tabular import TaskTypes
 
 
-def make_cfml_pattern(cfml_model, requires_prob) -> ModelPattern:
-    predict_method = "predict_prob" if requires_prob else "predict"
-    return ModelPattern(init_method=lambda: cfml_model, predict_method=predict_method)
+def make_cfml_pattern(cfml_model) -> ModelPattern:
+    return ModelPattern(
+        init_method=lambda: cfml_model,
+        predict_method="predict", predict_prob_method="predict_prob"
+    )
 
 
-def make_sklearn_pattern(sk_model, requires_prob) -> Union[ModelPattern, None]:
-    if requires_prob:
-        predict_method = getattr(sk_model, "predict_proba", None)
-        if predict_method is None:
-            return
-    else:
-        predict_method = lambda x: sk_model.predict(x).reshape([-1, 1])
-    return ModelPattern(predict_method=predict_method)
+def make_sklearn_pattern(sk_model) -> Union[ModelPattern, None]:
+    predict_prob_method = getattr(sk_model, "predict_proba", None)
+    predict_method = lambda x: sk_model.predict(x).reshape([-1, 1])
+    return ModelPattern(predict_method=predict_method, predict_prob_method=predict_prob_method)
 
 
 class SklearnComparer:
@@ -34,7 +32,7 @@ class SklearnComparer:
         if task_type is TaskTypes.REGRESSION:
             metrics = ["mae", "mse"]
             for models, make_function in zip(models_bundle, make_functions):
-                new_patterns = {k: make_function(v, False) for k, v in models.items()}
+                new_patterns = {k: make_function(v) for k, v in models.items()}
                 patterns.update({k: v for k, v in new_patterns.items() if v is not None})
         else:
             metrics = ["auc", "acc"]
@@ -42,7 +40,7 @@ class SklearnComparer:
                 for metric in metrics:
                     for model_name, model in models.items():
                         local_patterns = patterns.setdefault(model_name, {})
-                        new_pattern = make_function(model, metric in Metrics.requires_prob_metrics)
+                        new_pattern = make_function(model)
                         if new_pattern is not None:
                             local_patterns[metric] = new_pattern
         self._core = Comparer(patterns, list(map(Estimator, metrics)))
