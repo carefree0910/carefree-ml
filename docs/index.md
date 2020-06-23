@@ -20,9 +20,10 @@ See `tests/basic_usages.py` for more example
 
 ```python
 from cfml import *
+from cfdata.tabular import TabularDataset
 
 # fetch dataset
-boston = Data.boston()
+boston = TabularDataset.boston()
 # make a model
 lr = Base.make("linear_regression")
 # fit the model
@@ -36,10 +37,13 @@ predictions = lr.predict(boston.x)
 ...or use methods chaining
 
 ```python
+import os
 from cfml import *
+from cfdata.tabular import *
 
 # fetch dataset
-prices = Data().read("prices.txt")
+prices_file = os.path.join("tests", "datasets", "prices.txt")
+prices = TabularData(task_type=TaskTypes.REGRESSION).read(prices_file).to_dataset()
 # one liner
 Base.make("linear_regression").fit(*prices.xy).visualize1d(*prices.xy).plot_loss_curve()
 ```
@@ -350,13 +354,6 @@ From a practical point of view, perhaps the lightweight gradient descent framewo
 **所以，正如我开头所说，mainly for educational use，可能教育意义会大于实用意义。虽然本人学术能力不咋地，但是毕竟该 repo 的初衷应该很少搞学术的会看得起并加以研究，所以从这个角度来看，`carefree-ml` 也许能给你带来一些新的体会**
 
 So, as I said at the beginning, `carefree-ml` is mainly for educational use, so the meaning of education may be greater than the practical meaning. Although my academic ability is not good at all, the original intention of this repo might not be worthy of academic researching. So from this perspective, `carefree-ml` may give you some new sights
-
-
-## Announcement
-
-**虽然我确实用两天就把 `carefree-ml` 实现了出来（当然后面还有些小修小补），但是这得益于我之前就写过一个用 `numpy` 实现主流算法的 repo（[MachineLearning](https://github.com/carefree0910/MachineLearning)）（尤其是神经网络的核心代码，其实就是从这个 repo 里面 copy 了过来、稍微改了改就直接跑通了），以及我项目过程中各种搭框架的经验，因此“两天”这个时间还是有挺大的水分在里面的（大体上就是我也想当一回标题党了（喂**
-
-Although I did implement `carefree-ml` in two days, it benefits from a repo I wrote 3 years ago which uses numpy to implement machine learning algorithms ([MachineLearning](https://github.com/carefree0910/MachineLearning)) (In particular, the core codes of the neural network is actually copied from this repo with some minor modifications)
 
 
 ## License
