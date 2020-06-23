@@ -6,3 +6,4 @@ _*/
 build/*
 carefree_ml.egg-info
 pip-wheel-metadata
+dist/*
