@@ -1,5 +1,11 @@
 from setuptools import setup, find_packages
 
+VERSION = "0.1.0"
+
+DESCRIPTION = "Machine Learning algorithms implemented with numpy"
+with open("README.md") as f:
+    LONG_DESCRIPTION = f.read()
+
 setup(
     name="carefree-ml",
     version="0.1.0",
@@ -15,6 +21,10 @@ setup(
     ],
     author="carefree0910",
     author_email="syameimaru_kurumi@pku.edu.cn",
-    description="Machine Learning algorithms implemented with numpy",
+    url="https://github.com/carefree0910/carefree-ml",
+    download_url=f"https://github.com/carefree0910/carefree-ml/archive/v{VERSION}.tar.gz",
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
     keywords="python machine-learning numpy"
 )
