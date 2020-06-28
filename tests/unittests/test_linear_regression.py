@@ -7,7 +7,8 @@ from cfdata.tabular import *
 from sklearn.linear_model import LinearRegression
 
 
-prices_file = os.path.join(os.pardir, "datasets", "prices.txt")
+file_folder = os.path.dirname(__file__)
+prices_file = os.path.abspath(os.path.join(file_folder, os.pardir, "datasets", "prices.txt"))
 prices = TabularData().read(prices_file).to_dataset()
 lr = Base.make("linear_regression")
 poly = Base.make("poly", deg=1)

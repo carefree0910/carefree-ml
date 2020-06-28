@@ -16,7 +16,7 @@ pip install -e .
 
 ## Basic Usage
 
-See `tests/basic_usages.py` for more example
+See `tests/usages/basic.py` for more example
 
 ```python
 from cfml import *
