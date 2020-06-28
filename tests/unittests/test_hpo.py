@@ -7,7 +7,7 @@ from cfml.models import Base
 from cfml.misc.hpo import HPO
 
 
-if __name__ == '__main__':
+def test():
     dataset = TabularDataset.digits()
     splitter = DataSplitter().fit(dataset)
     test_fold, cv_fold, train_fold = splitter.split_multiple([0.1, 0.1], return_remained=True)
@@ -56,3 +56,7 @@ if __name__ == '__main__':
         "acc_model": acc_pattern, "auc_model": auc_pattern
     }, estimators)
     comparer.compare(*test_set.xy, verbose_level=2)
+
+
+if __name__ == '__main__':
+    test()
