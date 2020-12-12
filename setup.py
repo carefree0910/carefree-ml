@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 DESCRIPTION = "Machine Learning algorithms implemented with numpy"
 with open("README.md", encoding="utf-8") as f:
@@ -8,7 +8,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="carefree-ml",
-    version="0.1.0",
+    version=VERSION,
     packages=find_packages(exclude=("tests",)),
     install_requires=[
         "carefree-data>=0.1.2",
