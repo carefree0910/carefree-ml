@@ -1,7 +1,7 @@
 from cftool.ml import *
 from cftool.ml.param_utils import *
 from cfdata.tabular import TabularDataset
-from cfdata.tabular.utils import DataSplitter
+from cfdata.tabular.toolkit import DataSplitter
 
 from cfml.models import Base
 from cfml.misc.hpo import HPO
@@ -28,7 +28,8 @@ def test():
     ).search(
         train_set.x, train_set.y,
         estimators,
-        cv_set.x, cv_set.y
+        cv_set.x, cv_set.y,
+        num_jobs=1,
     )
 
     naive_pattern = ModelPattern.repeat(
