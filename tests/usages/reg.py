@@ -1,4 +1,5 @@
 from cfml import *
+
 Experiment.suppress_warnings()
 
 import numpy as np
@@ -11,8 +12,10 @@ np.random.seed(142857)
 fcnn = Base.make("fcnn_reg")
 sk_reg = MLPRegressor()
 experiment = Experiment(
-    {"cfml": fcnn}, {"sklearn": sk_reg},
-    task_type=TaskTypes.REGRESSION, show_images=True
+    {"cfml": fcnn},
+    {"sklearn": sk_reg},
+    task_type=TaskTypes.REGRESSION,
+    show_images=True,
 )
 
 # noisy poly

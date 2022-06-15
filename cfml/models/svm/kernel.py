@@ -19,10 +19,10 @@ class Kernel(StrMixin):
 
     def poly(self, x1, x2):
         p = self._kwargs.get("p", 3)
-        return (x1.dot(x2.T) + 1.) ** p
+        return (x1.dot(x2.T) + 1.0) ** p
 
     def rbf(self, x1, x2):
-        gamma = self._kwargs.get("gamma", 1.)
+        gamma = self._kwargs.get("gamma", 1.0)
         return np.exp(-gamma * np.sum((x1[..., None, :] - x2) ** 2, axis=2))
 
 

@@ -11,7 +11,9 @@ prices = TabularData(task_type=TaskTypes.REGRESSION).read(prices_file).to_datase
 breast_cancer = TabularDataset.breast_cancer()
 digits = TabularDataset.digits()
 column_indices = list(range(digits.num_features))
-digits_onehot = TabularData.from_dataset(digits, categorical_columns=column_indices).to_dataset()
+digits_onehot = TabularData.from_dataset(
+    digits, categorical_columns=column_indices
+).to_dataset()
 
 # numpy poly fit
 Base.make("poly").fit(*prices.xy).visualize1d(*prices.xy)

@@ -14,10 +14,8 @@ class Base(ABC):
         pass
 
     @abstractmethod
-    def fit(self,
-            x: np.ndarray,
-            y: np.ndarray) -> base_type:
-        """ fit the model
+    def fit(self, x: np.ndarray, y: np.ndarray) -> base_type:
+        """fit the model
 
         Parameters
         ----------
@@ -32,9 +30,8 @@ class Base(ABC):
         """
 
     @abstractmethod
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        """ make predictions with the model
+    def predict(self, x: np.ndarray) -> np.ndarray:
+        """make predictions with the model
 
         Parameters
         ----------
@@ -62,9 +59,8 @@ class Base(ABC):
 
 
 class ClassifierBase(Base, metaclass=ABCMeta):
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        """ make label predictions with the model
+    def predict(self, x: np.ndarray) -> np.ndarray:
+        """make label predictions with the model
 
         Parameters
         ----------
@@ -80,9 +76,8 @@ class ClassifierBase(Base, metaclass=ABCMeta):
         return np.argmax(self.predict_prob(x), axis=1).reshape([-1, 1])
 
     @abstractmethod
-    def predict_prob(self,
-                     x: np.ndarray) -> np.ndarray:
-        """ make probabilistic predictions with the model
+    def predict_prob(self, x: np.ndarray) -> np.ndarray:
+        """make probabilistic predictions with the model
 
         Parameters
         ----------
@@ -96,18 +91,19 @@ class ClassifierBase(Base, metaclass=ABCMeta):
 
         """
 
-    def visualize2d(self,
-                    x: np.ndarray,
-                    y: np.ndarray = None,
-                    **kwargs) -> Union[None, np.ndarray]:
+    def visualize2d(
+        self,
+        x: np.ndarray,
+        y: np.ndarray = None,
+        **kwargs,
+    ) -> Union[None, np.ndarray]:
         return Visualizer.visualize2d(self.predict, x, y, **kwargs)
 
 
 class RegressorBase(Base, metaclass=ABCMeta):
     @abstractmethod
-    def predict(self,
-                x: np.ndarray) -> np.ndarray:
-        """ make value predictions with the model
+    def predict(self, x: np.ndarray) -> np.ndarray:
+        """make value predictions with the model
 
         Parameters
         ----------
@@ -121,10 +117,12 @@ class RegressorBase(Base, metaclass=ABCMeta):
 
         """
 
-    def visualize1d(self,
-                    x: np.ndarray,
-                    y: np.ndarray = None,
-                    **kwargs) -> "RegressorBase":
+    def visualize1d(
+        self,
+        x: np.ndarray,
+        y: np.ndarray = None,
+        **kwargs,
+    ) -> "RegressorBase":
         Visualizer.visualize1d(self.predict, x, y, **kwargs)
         return self
 

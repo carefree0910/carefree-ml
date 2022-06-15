@@ -7,12 +7,15 @@ from ..bases import RegressorBase
 
 @RegressorBase.register("svr")
 class SVR(CoreSVRMixin, SVRMixin, RegressorBase):
-    def __init__(self, *,
-                 eps: float = 0.,
-                 kernel: str = "rbf",
-                 optimizer: str = "rmsprop",
-                 lb: Union[str, float] = "auto",
-                 kernel_config: Dict[str, Any] = None):
+    def __init__(
+        self,
+        *,
+        eps: float = 0.0,
+        kernel: str = "rbf",
+        optimizer: str = "rmsprop",
+        lb: Union[str, float] = "auto",
+        kernel_config: Dict[str, Any] = None
+    ):
         self._eps = eps
         self._opt = optimizer
         self._lb = self._raw_lb = lb

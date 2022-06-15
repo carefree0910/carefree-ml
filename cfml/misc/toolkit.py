@@ -10,22 +10,28 @@ from cfdata.tabular import TaskTypes
 def make_cfml_pattern(cfml_model) -> ModelPattern:
     return ModelPattern(
         init_method=lambda: cfml_model,
-        predict_method="predict", predict_prob_method="predict_prob"
+        predict_method="predict",
+        predict_prob_method="predict_prob",
     )
 
 
 def make_sklearn_pattern(sk_model) -> Union[ModelPattern, None]:
     predict_prob_method = getattr(sk_model, "predict_proba", None)
     predict_method = lambda x: sk_model.predict(x).reshape([-1, 1])
-    return ModelPattern(predict_method=predict_method, predict_prob_method=predict_prob_method)
+    return ModelPattern(
+        predict_method=predict_method,
+        predict_prob_method=predict_prob_method,
+    )
 
 
 class SklearnComparer:
-    def __init__(self,
-                 cfml_models: Dict[str, Any],
-                 sklearn_models: Dict[str, Any],
-                 *,
-                 task_type: TaskTypes = TaskTypes.CLASSIFICATION):
+    def __init__(
+        self,
+        cfml_models: Dict[str, Any],
+        sklearn_models: Dict[str, Any],
+        *,
+        task_type: TaskTypes = TaskTypes.CLASSIFICATION,
+    ):
         patterns = {}
         models_bundle = [cfml_models, sklearn_models]
         make_functions = [make_cfml_pattern, make_sklearn_pattern]
@@ -33,7 +39,8 @@ class SklearnComparer:
             metrics = ["mae", "mse"]
             for models, make_function in zip(models_bundle, make_functions):
                 new_patterns = {k: make_function(v) for k, v in models.items()}
-                patterns.update({k: v for k, v in new_patterns.items() if v is not None})
+                new_patterns = {k: v for k, v in new_patterns.items() if v is not None}
+                patterns.update(new_patterns)
         else:
             metrics = ["auc", "acc"]
             for models, make_function in zip(models_bundle, make_functions):
@@ -45,29 +52,35 @@ class SklearnComparer:
                             local_patterns[metric] = new_pattern
         self._core = Comparer(patterns, list(map(Estimator, metrics)))
 
-    def compare(self,
-                x: np.ndarray,
-                y: np.ndarray):
+    def compare(self, x: np.ndarray, y: np.ndarray):
         self._core.compare(x, y)
 
 
 class Experiment:
-    def __init__(self,
-                 cfml_models: Dict[str, Any],
-                 sklearn_models: Dict[str, Any],
-                 *,
-                 task_type: TaskTypes = TaskTypes.CLASSIFICATION,
-                 show_images: bool = False):
+    def __init__(
+        self,
+        cfml_models: Dict[str, Any],
+        sklearn_models: Dict[str, Any],
+        *,
+        task_type: TaskTypes = TaskTypes.CLASSIFICATION,
+        show_images: bool = False,
+    ):
         self._show_images = show_images
         self._cfml_models = cfml_models
         self._sklearn_models = sklearn_models
-        self._comparer = SklearnComparer(cfml_models, sklearn_models, task_type=task_type)
+        self._comparer = SklearnComparer(
+            cfml_models,
+            sklearn_models,
+            task_type=task_type,
+        )
 
     @staticmethod
     def suppress_warnings():
         def warn(*args, **kwargs):
             pass
+
         import warnings
+
         warnings.warn = warn
 
     def run(self, tr_set, te_set=None):
@@ -109,7 +122,7 @@ class Activations:
     def grad(self, forward: np.ndarray) -> np.ndarray:
         return getattr(Activations, f"{self._activation}_grad")(forward)
 
-    def visualize(self, x_min: float = -5., x_max: float = 5.):
+    def visualize(self, x_min: float = -5.0, x_max: float = 5.0):
         plt.figure()
         x0 = np.linspace(x_min, x_max)
         plt.plot(x0, self(x0))
@@ -117,19 +130,19 @@ class Activations:
 
     @staticmethod
     def relu(x):
-        return np.maximum(0., x)
+        return np.maximum(0.0, x)
 
     @staticmethod
     def relu_grad(forward):
-        return (forward != 0.).astype(np.float32)
+        return (forward != 0.0).astype(np.float32)
 
     @staticmethod
     def sigmoid(x):
-        return 1. / (1. + np.exp(-x))
+        return 1.0 / (1.0 + np.exp(-x))
 
     @staticmethod
     def sigmoid_grad(forward):
-        return forward * (1. - forward)
+        return forward * (1.0 - forward)
 
     @staticmethod
     def softmax(x):
@@ -138,7 +151,7 @@ class Activations:
 
     @staticmethod
     def softmax_grad(forward):
-        return forward * (1. - forward)
+        return forward * (1.0 - forward)
 
 
 __all__ = ["SklearnComparer", "Experiment", "Activations"]

@@ -10,17 +10,12 @@ def raise_no_gradient():
 
 
 class Layer:
-    def __init__(self,
-                 num_units: int,
-                 activation: Union[str, None]):
+    def __init__(self, num_units: int, activation: Union[str, None]):
         self.forward = None
         self.num_units = num_units
         self.activation = None if activation is None else Activations(activation)
 
-    def __call__(self,
-                 x: np.ndarray,
-                 w: np.ndarray,
-                 b: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, w: np.ndarray, b: np.ndarray) -> np.ndarray:
         affine = x.dot(w) + b
         if self.activation is None:
             self.forward = affine
@@ -28,9 +23,7 @@ class Layer:
             self.forward = self.activation(affine)
         return self.forward
 
-    def backward(self,
-                 w: np.ndarray,
-                 prev_delta: np.ndarray) -> np.ndarray:
+    def backward(self, w: np.ndarray, prev_delta: np.ndarray) -> np.ndarray:
         if self.forward is None:
             raise_no_gradient()
         delta = prev_delta.dot(w.T)
@@ -40,14 +33,11 @@ class Layer:
 
 
 class Loss:
-    def __init__(self,
-                 loss: str):
+    def __init__(self, loss: str):
         self._loss = loss
         self._caches = {}
 
-    def __call__(self,
-                 output: np.ndarray,
-                 target: np.ndarray) -> float:
+    def __call__(self, output: np.ndarray, target: np.ndarray) -> float:
         return getattr(self, self._loss)(output, target)
 
     def backward(self) -> np.ndarray:
@@ -55,9 +45,7 @@ class Loss:
             raise_no_gradient()
         return getattr(self, f"{self._loss}_backward")()
 
-    def l1(self,
-           output: np.ndarray,
-           target: np.ndarray) -> float:
+    def l1(self, output: np.ndarray, target: np.ndarray) -> float:
         diff = output - target
         self._caches["diff"] = diff
         return np.abs(diff).mean().item()
@@ -66,9 +54,7 @@ class Loss:
         diff = self._caches["diff"]
         return np.sign(diff)
 
-    def mse(self,
-            output: np.ndarray,
-            target: np.ndarray):
+    def mse(self, output: np.ndarray, target: np.ndarray):
         diff = output - target
         self._caches["diff"] = diff
         return np.linalg.norm(diff).mean().item()
@@ -79,9 +65,7 @@ class Loss:
 
     # Here, we assume that softmax is always applied when cross_entropy is used
 
-    def cross_entropy(self,
-                      output: np.ndarray,
-                      target: np.ndarray) -> float:
+    def cross_entropy(self, output: np.ndarray, target: np.ndarray) -> float:
         output = Activations.softmax(output)
         return self.mse(output, target)
 
@@ -90,23 +74,17 @@ class Loss:
 
 
 class Initializer:
-    def __init__(self,
-                 initializer: str = "uniform",
-                 **kwargs):
+    def __init__(self, initializer: str = "uniform", **kwargs):
         self._initializer = initializer
         self._kwargs = kwargs
 
-    def initialize(self,
-                   input_dim: int,
-                   output_dim: int) -> np.ndarray:
+    def initialize(self, input_dim: int, output_dim: int) -> np.ndarray:
         return getattr(self, self._initializer)(input_dim, output_dim)
 
-    def uniform(self,
-                input_dim: int,
-                output_dim: int) -> np.ndarray:
-        floor, ceiling = map(self._kwargs.get, ["floor", "ceiling"], [-1., 1.])
+    def uniform(self, input_dim: int, output_dim: int) -> np.ndarray:
+        floor, ceiling = map(self._kwargs.get, ["floor", "ceiling"], [-1.0, 1.0])
         parameter = np.random.random([input_dim, output_dim]).astype(np.float32)
-        parameter *= (ceiling - floor)
+        parameter *= ceiling - floor
         parameter += floor
         return parameter
 

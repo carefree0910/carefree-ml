@@ -1,4 +1,5 @@
 from cfml import *
+
 Experiment.suppress_warnings()
 
 import numpy as np

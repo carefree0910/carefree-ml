@@ -8,8 +8,7 @@ from ...misc.toolkit import Activations
 
 @ClassifierBase.register("multinomial_nb")
 class MultinomialNB(ClassifierBase):
-    def __init__(self, *,
-                 alpha: float = 1.):
+    def __init__(self, *, alpha: float = 1.0):
         self._alpha = alpha
         self._w = self._b = None
         self._softmax = Activations("softmax")
@@ -22,9 +21,7 @@ class MultinomialNB(ClassifierBase):
     def feature_log_prob(self):
         return self._w.T
 
-    def fit(self,
-            x: np.ndarray,
-            y: np.ndarray) -> "MultinomialNB":
+    def fit(self, x: np.ndarray, y: np.ndarray) -> "MultinomialNB":
         y = y.ravel()
         y_bincount = np.bincount(y).reshape([1, -1])
         num_samples, num_classes = len(x), y_bincount.shape[1]
@@ -35,8 +32,7 @@ class MultinomialNB(ClassifierBase):
         self._w = np.log(smoothed_fc / smoothed_fc.sum(1, keepdims=True)).T
         return self
 
-    def predict_prob(self,
-                     x: np.ndarray) -> np.ndarray:
+    def predict_prob(self, x: np.ndarray) -> np.ndarray:
         affine = x.dot(self._w) + self._b
         return self._softmax(affine)
 
