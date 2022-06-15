@@ -8,6 +8,12 @@
 `carefree-ml` requires Python 3.8 or higher.
 
 ```bash
+pip install carefree-ml
+```
+
+or
+
+```bash
 git clone https://github.com/carefree0910/carefree-ml.git
 cd carefree-ml
 pip install -e .
