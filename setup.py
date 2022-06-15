@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-VERSION = "0.1.2"
+VERSION = "0.1.2.1"
 
 DESCRIPTION = "Machine Learning algorithms implemented with numpy"
 with open("README.md", encoding="utf-8") as f:
