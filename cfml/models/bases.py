@@ -1,9 +1,13 @@
 import numpy as np
 
 from typing import *
-from cftool.ml import Visualizer
+from abc import abstractmethod
+from abc import ABC
+from abc import ABCMeta
 from cftool.misc import register_core
-from abc import ABC, ABCMeta, abstractmethod
+
+from ..misc.toolkit import Visualizer
+
 
 base_type = Union["ClassifierBase", "RegressorBase"]
 model_dict: Dict[str, Type[base_type]] = {}

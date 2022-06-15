@@ -1,8 +1,10 @@
 import numpy as np
 
 from typing import *
-from cftool.ml import Metrics
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from abc import ABC
+
+from ..misc.toolkit import Metrics
 
 
 class StrMixin:

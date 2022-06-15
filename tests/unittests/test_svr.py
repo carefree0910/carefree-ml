@@ -7,7 +7,7 @@ from sklearn.svm import SVR, LinearSVR
 
 
 def test():
-    boston = TabularDataset.boston()
+    data = TabularDataset.noisy_linear(size=100)[0]
     svr = Base.make("svr")
     l_svr = Base.make("linear_svr")
     sk_svr = SVR()
@@ -15,7 +15,7 @@ def test():
 
     cfml_models = {"cfml_svr": svr, "cfml_l_svr": l_svr}
     sklearn_models = {"sklearn_svr": sk_svr, "sklearn_l_svr": sk_l_svr}
-    Experiment(cfml_models, sklearn_models, task_type=TaskTypes.REGRESSION).run(boston)
+    Experiment(cfml_models, sklearn_models, task_type=TaskTypes.REGRESSION).run(data)
 
 
 test()

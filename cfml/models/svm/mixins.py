@@ -2,11 +2,12 @@ import numpy as np
 
 from typing import *
 from abc import ABCMeta, abstractmethod
-from cftool.optim import GradientDescentMixin
 
 from .kernel import Kernel
 from ..bases import Base
-from ..mixins import NormalizeMixin, BinaryClassifierMixin
+from ..mixins import NormalizeMixin
+from ..mixins import BinaryClassifierMixin
+from ...misc.optim import GradientDescentMixin
 from ...misc.toolkit import Activations
 
 

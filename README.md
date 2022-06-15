@@ -5,7 +5,7 @@
 
 ## Installation
 
-`carefree-ml` requires Python 3.6 or higher.
+`carefree-ml` requires Python 3.8 or higher.
 
 ```bash
 git clone https://github.com/carefree0910/carefree-ml.git
