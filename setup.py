@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-VERSION = "0.1.2.1"
+VERSION = "0.1.3"
 
 DESCRIPTION = "Machine Learning algorithms implemented with numpy"
 with open("README.md", encoding="utf-8") as f:
@@ -13,8 +13,8 @@ setup(
     version=VERSION,
     packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "carefree-data>=0.2.7",
-        "carefree-toolkit>=0.2.10",
+        "carefree-data>=0.2.8",
+        "carefree-toolkit>=0.2.11",
         "pillow",
         "scipy>=1.8.0",
         "scikit-learn>=1.0.2",
